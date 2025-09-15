@@ -1,0 +1,184 @@
+{
+  "templates": [
+    {
+      "name": "Basic Homepage",
+      "description": "A clean and simple homepage template with hero section, features, and call-to-action.",
+      "category": "homepage",
+      "isFeatured": true,
+      "tags": [
+        { "tag": "responsive" },
+        { "tag": "clean" },
+        { "tag": "modern" }
+      ],
+      "pageBuilder": [
+        {
+          "blockType": "contentBlock",
+          "id": "hero-section",
+          "block": "hero-heading"
+        },
+        {
+          "blockType": "contentBlock", 
+          "id": "features-section",
+          "block": "features-list"
+        },
+        {
+          "blockType": "contentBlock",
+          "id": "cta-section", 
+          "block": "main-cta"
+        }
+      ]
+    },
+    {
+      "name": "About Us Page",
+      "description": "Professional about page with team section, company story, and values.",
+      "category": "about",
+      "isFeatured": true,
+      "tags": [
+        { "tag": "professional" },
+        { "tag": "team" },
+        { "tag": "corporate" }
+      ],
+      "pageBuilder": [
+        {
+          "blockType": "richText",
+          "id": "company-story",
+          "content": {
+            "root": {
+              "type": "root",
+              "children": [
+                {
+                  "type": "heading",
+                  "tag": "h1",
+                  "children": [
+                    {
+                      "type": "text",
+                      "text": "About Our Company"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "children": [
+                    {
+                      "type": "text",
+                      "text": "We are a forward-thinking company dedicated to delivering exceptional solutions and services to our clients."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "blockType": "contentBlock",
+          "id": "team-grid",
+          "block": "team-members"
+        }
+      ]
+    },
+    {
+      "name": "Contact Page", 
+      "description": "Complete contact page with form, map, and contact information.",
+      "category": "contact",
+      "tags": [
+        { "tag": "contact" },
+        { "tag": "form" },
+        { "tag": "map" }
+      ],
+      "pageBuilder": [
+        {
+          "blockType": "richText",
+          "id": "contact-intro",
+          "content": {
+            "root": {
+              "type": "root", 
+              "children": [
+                {
+                  "type": "heading",
+                  "tag": "h1",
+                  "children": [
+                    {
+                      "type": "text",
+                      "text": "Get in Touch"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "children": [
+                    {
+                      "type": "text",
+                      "text": "We'd love to hear from you. Send us a message and we'll respond as soon as possible."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "blockType": "contentBlock",
+          "id": "contact-form",
+          "block": "main-contact-form"
+        },
+        {
+          "blockType": "contentBlock",
+          "id": "google-map",
+          "block": "office-map"
+        }
+      ]
+    },
+    {
+      "name": "Services Landing",
+      "description": "Services showcase page with pricing, features, and testimonials.",
+      "category": "services",
+      "tags": [
+        { "tag": "services" },
+        { "tag": "pricing" },
+        { "tag": "business" }
+      ],
+      "pageBuilder": [
+        {
+          "blockType": "richText",
+          "id": "services-hero",
+          "content": {
+            "root": {
+              "type": "root",
+              "children": [
+                {
+                  "type": "heading",
+                  "tag": "h1", 
+                  "children": [
+                    {
+                      "type": "text",
+                      "text": "Our Services"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "children": [
+                    {
+                      "type": "text",
+                      "text": "Discover our comprehensive range of professional services designed to help your business grow."
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "blockType": "contentBlock",
+          "id": "services-features",
+          "block": "services-list"
+        },
+        {
+          "blockType": "contentBlock",
+          "id": "pricing-table",
+          "block": "service-pricing"
+        }
+      ]
+    }
+  ]
+}

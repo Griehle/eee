@@ -33,6 +33,19 @@ const eslintConfig = [
   {
     ignores: ['.next/'],
   },
+  {
+    files: [
+      'src/utils/serialize.ts', 
+      'src/app/(frontend)/page.tsx',
+      'src/components/PageBuilder/**/*',
+      'src/components/admin/**/*'
+    ],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@next/next/no-img-element': 'off',
+    },
+  },
 ]
 
 export default eslintConfig

@@ -69,6 +69,17 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    'media-categories': MediaCategory;
+    pages: Page;
+    posts: Post;
+    categories: Category;
+    'home-slider': HomeSlider;
+    'home-section': HomeSection;
+    testimonials: Testimonial;
+    'team-members': TeamMember;
+    services: Service;
+    'content-blocks': ContentBlock;
+    'page-templates': PageTemplate;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -77,15 +88,30 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    'media-categories': MediaCategoriesSelect<false> | MediaCategoriesSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
+    posts: PostsSelect<false> | PostsSelect<true>;
+    categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    'home-slider': HomeSliderSelect<false> | HomeSliderSelect<true>;
+    'home-section': HomeSectionSelect<false> | HomeSectionSelect<true>;
+    testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
+    'team-members': TeamMembersSelect<false> | TeamMembersSelect<true>;
+    services: ServicesSelect<false> | ServicesSelect<true>;
+    'content-blocks': ContentBlocksSelect<false> | ContentBlocksSelect<true>;
+    'page-templates': PageTemplatesSelect<false> | PageTemplatesSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: string;
+    defaultIDType: number;
   };
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'home-page': HomePage;
+  };
+  globalsSelect: {
+    'home-page': HomePageSelect<false> | HomePageSelect<true>;
+  };
   locale: null;
   user: User & {
     collection: 'users';
@@ -118,7 +144,10 @@ export interface UserAuthOperations {
  * via the `definition` "users".
  */
 export interface User {
-  id: string;
+  id: number;
+  firstName: string;
+  lastName: string;
+  role?: ('admin' | 'user') | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -138,12 +167,37 @@ export interface User {
   password?: string | null;
 }
 /**
+ * 📁 Upload and organize images, videos, and documents with advanced search and categorization
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
-  id: string;
+  id: number;
+  /**
+   * Alternative text for accessibility and SEO
+   */
   alt: string;
+  /**
+   * Optional title for the media file
+   */
+  title?: string | null;
+  /**
+   * Optional caption or description
+   */
+  caption?: string | null;
+  /**
+   * Organize files by category for easier searching
+   */
+  category?: (number | null) | MediaCategory;
+  /**
+   * Comma-separated tags for better searchability (e.g., "hero, banner, blue, modern")
+   */
+  tags?: string | null;
+  /**
+   * Intended use for this media file
+   */
+  usage?: ('general' | 'hero' | 'content' | 'team' | 'product' | 'icon' | 'background') | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -155,26 +209,1167 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    tablet?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media-categories".
+ */
+export interface MediaCategory {
+  id: number;
+  /**
+   * Category name (e.g., "Hero Images", "Team Photos", "Icons")
+   */
+  name: string;
+  /**
+   * URL-friendly version (auto-generated from name)
+   */
+  slug: string;
+  /**
+   * Brief description of what this category contains
+   */
+  description?: string | null;
+  /**
+   * Color coding for easy identification
+   */
+  color?: ('blue' | 'green' | 'yellow' | 'orange' | 'red' | 'purple' | 'gray') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: number;
+  title: string;
+  /**
+   * This will be the URL path for this page (e.g., "about" for /about)
+   */
+  slug: string;
+  templateSelector?: {
+    /**
+     * Load content from a template
+     */
+    useTemplate?: boolean | null;
+    /**
+     * Choose a template to load
+     */
+    template?: (number | null) | PageTemplate;
+  };
+  /**
+   * Build your page using blocks - drag, drop, and customize each element
+   */
+  pageBuilder?:
+    | (
+        | {
+            block: number | ContentBlock;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contentBlock';
+          }
+        | {
+            content: {
+              root: {
+                type: string;
+                children: {
+                  type: string;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'richText';
+          }
+        | {
+            /**
+             * Custom HTML code
+             */
+            html: string;
+            /**
+             * Optional CSS styles
+             */
+            css?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'customHTML';
+          }
+      )[]
+    | null;
+  /**
+   * Legacy content field - use Page Builder above for modern layouts
+   */
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  status?: ('draft' | 'published') | null;
+  publishedDate?: string | null;
+  author?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * 📋 Create reusable page templates similar to WPBakery template library
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "page-templates".
+ */
+export interface PageTemplate {
+  id: number;
+  /**
+   * Name of this template
+   */
+  name: string;
+  /**
+   * Brief description of what this template is used for
+   */
+  description?: string | null;
+  /**
+   * Template category
+   */
+  category?:
+    | (
+        | 'homepage'
+        | 'about'
+        | 'contact'
+        | 'services'
+        | 'team'
+        | 'blog'
+        | 'portfolio'
+        | 'pricing'
+        | 'faq'
+        | 'landing'
+        | 'other'
+      )
+    | null;
+  /**
+   * Preview image for this template
+   */
+  thumbnail?: (number | null) | Media;
+  /**
+   * Build the template structure using blocks
+   */
+  pageBuilder?:
+    | (
+        | {
+            block: number | ContentBlock;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'contentBlock';
+          }
+        | {
+            content: {
+              root: {
+                type: string;
+                children: {
+                  type: string;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'richText';
+          }
+        | {
+            /**
+             * Custom HTML code
+             */
+            html: string;
+            /**
+             * Optional CSS styles
+             */
+            css?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'customHTML';
+          }
+      )[]
+    | null;
+  /**
+   * Tags to help users find this template (e.g., "responsive", "modern", "business")
+   */
+  tags?:
+    | {
+        tag: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Make this template available for use
+   */
+  isActive?: boolean | null;
+  /**
+   * Featured templates appear first in the template picker
+   */
+  isFeatured?: boolean | null;
+  metadata?: {
+    /**
+     * Template author/creator
+     */
+    author?: string | null;
+    /**
+     * Template version
+     */
+    version?: string | null;
+    compatibility?: ('responsive' | 'desktop' | 'mobile') | null;
+    /**
+     * Any plugins or dependencies required for this template
+     */
+    requiredPlugins?:
+      | {
+          plugin: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * 🏗️ Create powerful page builder blocks similar to WPBakery
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "content-blocks".
+ */
+export interface ContentBlock {
+  id: number;
+  /**
+   * Internal name for this content block
+   */
+  title: string;
+  /**
+   * What type of content block this is
+   */
+  blockType:
+    | 'row'
+    | 'column'
+    | 'section'
+    | 'text'
+    | 'heading'
+    | 'image'
+    | 'gallery'
+    | 'video'
+    | 'quote'
+    | 'button'
+    | 'icon_box'
+    | 'accordion'
+    | 'tabs'
+    | 'carousel'
+    | 'contact_form'
+    | 'google_maps'
+    | 'features'
+    | 'stats'
+    | 'team_grid'
+    | 'posts_grid'
+    | 'cta'
+    | 'progress_bar'
+    | 'separator';
+  /**
+   * Define columns for this row
+   */
+  columns?:
+    | {
+        width?: ('1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12') | null;
+        content?: {
+          root: {
+            type: string;
+            children: {
+              type: string;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Main content for this block
+   */
+  content?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Heading configuration
+   */
+  heading?: {
+    text: string;
+    tag?: ('h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6') | null;
+    /**
+     * CSS color value (e.g., #333333)
+     */
+    color?: string | null;
+  };
+  /**
+   * Image for this block
+   */
+  image?: (number | null) | Media;
+  /**
+   * Images for gallery
+   */
+  gallery?:
+    | {
+        image: number | Media;
+        caption?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Video configuration
+   */
+  video?: {
+    /**
+     * YouTube, Vimeo, or direct video URL
+     */
+    url?: string | null;
+    autoplay?: boolean | null;
+    controls?: boolean | null;
+    loop?: boolean | null;
+  };
+  /**
+   * Quote/testimonial content
+   */
+  quote?: {
+    text: string;
+    author?: string | null;
+    authorTitle?: string | null;
+    authorImage?: (number | null) | Media;
+  };
+  /**
+   * Button configuration
+   */
+  button?: {
+    text: string;
+    url: string;
+    style?: ('primary' | 'secondary' | 'outline' | 'ghost') | null;
+    size?: ('sm' | 'md' | 'lg') | null;
+    openInNewTab?: boolean | null;
+  };
+  /**
+   * Icon box content
+   */
+  iconBox?: {
+    /**
+     * Icon class or SVG code
+     */
+    icon?: string | null;
+    title: string;
+    description?: string | null;
+    link?: string | null;
+  };
+  /**
+   * Accordion items
+   */
+  accordion?:
+    | {
+        title: string;
+        content: {
+          root: {
+            type: string;
+            children: {
+              type: string;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        isOpen?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Tab items
+   */
+  tabs?:
+    | {
+        title: string;
+        content: {
+          root: {
+            type: string;
+            children: {
+              type: string;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        icon?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Contact form configuration
+   */
+  contactForm?: {
+    title?: string | null;
+    description?: string | null;
+    emailTo: string;
+    fields?:
+      | {
+          label: string;
+          name: string;
+          type?: ('text' | 'email' | 'tel' | 'textarea' | 'select') | null;
+          required?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * Google Maps configuration
+   */
+  googleMaps?: {
+    address: string;
+    zoom?: number | null;
+    height?: string | null;
+  };
+  /**
+   * List of features
+   */
+  features?:
+    | {
+        icon?: string | null;
+        title: string;
+        description?: string | null;
+        link?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Statistics to display
+   */
+  stats?:
+    | {
+        /**
+         * The statistic number (e.g., "100+", "50%")
+         */
+        number: string;
+        /**
+         * What this statistic represents
+         */
+        label: string;
+        icon?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Team members grid
+   */
+  teamGrid?: {
+    members?: (number | TeamMember)[] | null;
+    columns?: ('2' | '3' | '4') | null;
+  };
+  /**
+   * Posts grid configuration
+   */
+  postsGrid?: {
+    category?: (number | null) | Category;
+    count?: number | null;
+    columns?: ('2' | '3' | '4') | null;
+  };
+  /**
+   * Call to action content
+   */
+  cta?: {
+    title: string;
+    description?: string | null;
+    primaryButton?: {
+      text?: string | null;
+      url?: string | null;
+    };
+    secondaryButton?: {
+      text?: string | null;
+      url?: string | null;
+    };
+  };
+  /**
+   * Progress bars
+   */
+  progressBar?:
+    | {
+        label: string;
+        percentage: number;
+        color?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Separator styling
+   */
+  separator?: {
+    style?: ('line' | 'dashed' | 'dotted' | 'double' | 'shadow') | null;
+    width?: ('25' | '50' | '75' | '100') | null;
+    color?: string | null;
+  };
+  styling?: {
+    /**
+     * Top margin (e.g., 20px, 2rem)
+     */
+    marginTop?: string | null;
+    /**
+     * Bottom margin (e.g., 20px, 2rem)
+     */
+    marginBottom?: string | null;
+    /**
+     * Top padding (e.g., 20px, 2rem)
+     */
+    paddingTop?: string | null;
+    /**
+     * Bottom padding (e.g., 20px, 2rem)
+     */
+    paddingBottom?: string | null;
+    /**
+     * Left padding (e.g., 20px, 2rem)
+     */
+    paddingLeft?: string | null;
+    /**
+     * Right padding (e.g., 20px, 2rem)
+     */
+    paddingRight?: string | null;
+    /**
+     * Background color (e.g., #ffffff, rgba(255,255,255,0.8))
+     */
+    backgroundColor?: string | null;
+    /**
+     * Background image
+     */
+    backgroundImage?: (number | null) | Media;
+    backgroundPosition?:
+      | (
+          | 'top left'
+          | 'top center'
+          | 'top right'
+          | 'center left'
+          | 'center center'
+          | 'center right'
+          | 'bottom left'
+          | 'bottom center'
+          | 'bottom right'
+        )
+      | null;
+    backgroundSize?: ('cover' | 'contain' | 'auto') | null;
+    backgroundRepeat?: ('no-repeat' | 'repeat' | 'repeat-x' | 'repeat-y') | null;
+    /**
+     * CSS gradient (e.g., linear-gradient(45deg, #ff0000, #00ff00))
+     */
+    backgroundGradient?: string | null;
+    /**
+     * Border width (e.g., 1px, 2px)
+     */
+    borderWidth?: string | null;
+    borderStyle?: ('none' | 'solid' | 'dashed' | 'dotted' | 'double') | null;
+    /**
+     * Border color (e.g., #cccccc)
+     */
+    borderColor?: string | null;
+    /**
+     * Border radius (e.g., 5px, 10px)
+     */
+    borderRadius?: string | null;
+    textAlign?: ('left' | 'center' | 'right' | 'justify') | null;
+    /**
+     * Text color (e.g., #333333)
+     */
+    textColor?: string | null;
+    /**
+     * Font size (e.g., 16px, 1.2rem)
+     */
+    fontSize?: string | null;
+    fontWeight?: ('normal' | 'bold' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900') | null;
+    /**
+     * Box shadow (e.g., 0 4px 6px rgba(0,0,0,0.1))
+     */
+    boxShadow?: string | null;
+    animation?:
+      | (
+          | 'none'
+          | 'fadeIn'
+          | 'fadeInUp'
+          | 'fadeInDown'
+          | 'fadeInLeft'
+          | 'fadeInRight'
+          | 'slideInUp'
+          | 'slideInDown'
+          | 'zoomIn'
+          | 'bounceIn'
+        )
+      | null;
+    /**
+     * Animation delay (e.g., 0.2s, 200ms)
+     */
+    animationDelay?: string | null;
+    /**
+     * Animation duration (e.g., 1s, 500ms)
+     */
+    animationDuration?: string | null;
+    /**
+     * Hide this block on mobile devices
+     */
+    hideOnMobile?: boolean | null;
+    /**
+     * Hide this block on tablet devices
+     */
+    hideOnTablet?: boolean | null;
+    /**
+     * Hide this block on desktop devices
+     */
+    hideOnDesktop?: boolean | null;
+    /**
+     * Custom CSS styles for advanced customization
+     */
+    customCSS?: string | null;
+    /**
+     * Custom CSS class name
+     */
+    customClassName?: string | null;
+  };
+  /**
+   * Make this block available for use
+   */
+  isActive?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * 👥 Manage team member profiles and information
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members".
+ */
+export interface TeamMember {
+  id: number;
+  /**
+   * Full name of the team member
+   */
+  name: string;
+  /**
+   * Job title or position
+   */
+  position: string;
+  /**
+   * Department or team
+   */
+  department?:
+    | (
+        | 'leadership'
+        | 'engineering'
+        | 'design'
+        | 'marketing'
+        | 'sales'
+        | 'operations'
+        | 'hr'
+        | 'finance'
+        | 'support'
+        | 'other'
+      )
+    | null;
+  /**
+   * Professional headshot or profile photo
+   */
+  photo: number | Media;
+  /**
+   * Biography or description of the team member
+   */
+  bio?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Work email address (optional)
+   */
+  email?: string | null;
+  /**
+   * Work phone number (optional)
+   */
+  phone?: string | null;
+  socialLinks?: {
+    /**
+     * LinkedIn profile URL
+     */
+    linkedin?: string | null;
+    /**
+     * Twitter profile URL
+     */
+    twitter?: string | null;
+    /**
+     * GitHub profile URL
+     */
+    github?: string | null;
+  };
+  /**
+   * Date when they joined the company
+   */
+  startDate?: string | null;
+  /**
+   * Feature this team member prominently
+   */
+  featured?: boolean | null;
+  /**
+   * Show this team member on the website
+   */
+  isActive?: boolean | null;
+  /**
+   * Display order within department
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: number;
+  name: string;
+  description?: string | null;
+  /**
+   * URL-friendly version of the category name
+   */
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: number;
+  title: string;
+  /**
+   * This will be the URL path for this post
+   */
+  slug: string;
+  /**
+   * Brief description shown in post listings
+   */
+  excerpt: string;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  featuredImage?: (number | null) | Media;
+  status?: ('draft' | 'published') | null;
+  publishedDate?: string | null;
+  author: number | User;
+  categories?: (number | Category)[] | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * 📸 Manage up to 10 slider images for the home page hero section. Recommended image size: 1920x800px or larger.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-slider".
+ */
+export interface HomeSlider {
+  id: number;
+  /**
+   * The main title displayed on the slide
+   */
+  title: string;
+  /**
+   * Optional subtitle text displayed below the title
+   */
+  subtitle?: string | null;
+  /**
+   * Background image for this slide
+   */
+  image: number | Media;
+  /**
+   * Text for the call-to-action button (optional)
+   */
+  buttonText?: string | null;
+  /**
+   * URL for the button link (can be internal like /about or external)
+   */
+  buttonLink?: string | null;
+  /**
+   * Uncheck to hide this slide
+   */
+  isActive?: boolean | null;
+  /**
+   * Display order (0-99, lower numbers appear first). Tip: Use 10, 20, 30... to easily reorder later.
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * 📝 Create content sections with rich text and images positioned left or right
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-section".
+ */
+export interface HomeSection {
+  id: number;
+  /**
+   * Section title/heading
+   */
+  title: string;
+  /**
+   * Main content for this section - use the rich text editor to format your content with headings, lists, links, and more
+   */
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Image to display alongside the content
+   */
+  image: number | Media;
+  /**
+   * Choose how to arrange the image and text content
+   */
+  imagePosition?: ('left' | 'right') | null;
+  /**
+   * Text for the call-to-action button (optional)
+   */
+  buttonText?: string | null;
+  /**
+   * URL for the button link (can be internal like /about or external)
+   */
+  buttonLink?: string | null;
+  /**
+   * Background color for this section
+   */
+  backgroundColor?: ('transparent' | 'var(--card-background)' | 'var(--background-color)') | null;
+  /**
+   * Uncheck to hide this section
+   */
+  isActive?: boolean | null;
+  /**
+   * Order of appearance (lower numbers appear first)
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * ⭐ Manage customer testimonials and reviews
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials".
+ */
+export interface Testimonial {
+  id: number;
+  /**
+   * The customer testimonial or review text
+   */
+  testimonial: string;
+  /**
+   * Full name of the customer
+   */
+  customerName: string;
+  /**
+   * Customer's company or organization (optional)
+   */
+  company?: string | null;
+  /**
+   * Job title or position (optional)
+   */
+  position?: string | null;
+  /**
+   * Optional photo of the customer
+   */
+  customerPhoto?: (number | null) | Media;
+  /**
+   * Star rating (1-5)
+   */
+  rating?: number | null;
+  /**
+   * Feature this testimonial prominently
+   */
+  featured?: boolean | null;
+  /**
+   * Show this testimonial on the website
+   */
+  isActive?: boolean | null;
+  /**
+   * Display order (lower numbers appear first)
+   */
+  order?: number | null;
+  /**
+   * When the testimonial was received
+   */
+  dateGiven?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * 🛠️ Manage services and business offerings
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services".
+ */
+export interface Service {
+  id: number;
+  /**
+   * Service name or title
+   */
+  title: string;
+  /**
+   * URL-friendly version for service pages
+   */
+  slug: string;
+  /**
+   * Brief description for service cards and listings
+   */
+  shortDescription: string;
+  /**
+   * Full detailed description of the service
+   */
+  description: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Main image representing the service
+   */
+  featuredImage: number | Media;
+  /**
+   * Optional icon for the service (SVG or small image)
+   */
+  icon?: (number | null) | Media;
+  /**
+   * Service category for grouping
+   */
+  category?: ('web-development' | 'mobile-apps' | 'design' | 'consulting' | 'support' | 'training' | 'other') | null;
+  /**
+   * List of key features or benefits
+   */
+  features?:
+    | {
+        feature: string;
+        id?: string | null;
+      }[]
+    | null;
+  pricing?: {
+    /**
+     * Starting price (optional)
+     */
+    startingPrice?: number | null;
+    /**
+     * How the service is priced
+     */
+    priceType?: ('per-hour' | 'per-project' | 'monthly' | 'custom') | null;
+    /**
+     * Additional pricing information (e.g., "Starting from" or "Contact for quote")
+     */
+    priceNote?: string | null;
+  };
+  callToAction?: {
+    /**
+     * Text for the CTA button
+     */
+    buttonText?: string | null;
+    /**
+     * Where the CTA button should link to
+     */
+    buttonLink?: string | null;
+  };
+  /**
+   * Feature this service prominently
+   */
+  featured?: boolean | null;
+  /**
+   * Show this service on the website
+   */
+  isActive?: boolean | null;
+  /**
+   * Display order (lower numbers appear first)
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string;
+  id: number;
   document?:
     | ({
         relationTo: 'users';
-        value: string | User;
+        value: number | User;
       } | null)
     | ({
         relationTo: 'media';
-        value: string | Media;
+        value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'media-categories';
+        value: number | MediaCategory;
+      } | null)
+    | ({
+        relationTo: 'pages';
+        value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'posts';
+        value: number | Post;
+      } | null)
+    | ({
+        relationTo: 'categories';
+        value: number | Category;
+      } | null)
+    | ({
+        relationTo: 'home-slider';
+        value: number | HomeSlider;
+      } | null)
+    | ({
+        relationTo: 'home-section';
+        value: number | HomeSection;
+      } | null)
+    | ({
+        relationTo: 'testimonials';
+        value: number | Testimonial;
+      } | null)
+    | ({
+        relationTo: 'team-members';
+        value: number | TeamMember;
+      } | null)
+    | ({
+        relationTo: 'services';
+        value: number | Service;
+      } | null)
+    | ({
+        relationTo: 'content-blocks';
+        value: number | ContentBlock;
+      } | null)
+    | ({
+        relationTo: 'page-templates';
+        value: number | PageTemplate;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -184,10 +1379,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string;
+  id: number;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   key?: string | null;
   value?:
@@ -207,7 +1402,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string;
+  id: number;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -218,6 +1413,9 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  firstName?: T;
+  lastName?: T;
+  role?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -241,6 +1439,11 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  title?: T;
+  caption?: T;
+  category?: T;
+  tags?: T;
+  usage?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -252,6 +1455,502 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        tablet?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media-categories_select".
+ */
+export interface MediaCategoriesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  color?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages_select".
+ */
+export interface PagesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  templateSelector?:
+    | T
+    | {
+        useTemplate?: T;
+        template?: T;
+      };
+  pageBuilder?:
+    | T
+    | {
+        contentBlock?:
+          | T
+          | {
+              block?: T;
+              id?: T;
+              blockName?: T;
+            };
+        richText?:
+          | T
+          | {
+              content?: T;
+              id?: T;
+              blockName?: T;
+            };
+        customHTML?:
+          | T
+          | {
+              html?: T;
+              css?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  content?: T;
+  status?: T;
+  publishedDate?: T;
+  author?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts_select".
+ */
+export interface PostsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  excerpt?: T;
+  content?: T;
+  featuredImage?: T;
+  status?: T;
+  publishedDate?: T;
+  author?: T;
+  categories?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories_select".
+ */
+export interface CategoriesSelect<T extends boolean = true> {
+  name?: T;
+  description?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-slider_select".
+ */
+export interface HomeSliderSelect<T extends boolean = true> {
+  title?: T;
+  subtitle?: T;
+  image?: T;
+  buttonText?: T;
+  buttonLink?: T;
+  isActive?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-section_select".
+ */
+export interface HomeSectionSelect<T extends boolean = true> {
+  title?: T;
+  content?: T;
+  image?: T;
+  imagePosition?: T;
+  buttonText?: T;
+  buttonLink?: T;
+  backgroundColor?: T;
+  isActive?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "testimonials_select".
+ */
+export interface TestimonialsSelect<T extends boolean = true> {
+  testimonial?: T;
+  customerName?: T;
+  company?: T;
+  position?: T;
+  customerPhoto?: T;
+  rating?: T;
+  featured?: T;
+  isActive?: T;
+  order?: T;
+  dateGiven?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team-members_select".
+ */
+export interface TeamMembersSelect<T extends boolean = true> {
+  name?: T;
+  position?: T;
+  department?: T;
+  photo?: T;
+  bio?: T;
+  email?: T;
+  phone?: T;
+  socialLinks?:
+    | T
+    | {
+        linkedin?: T;
+        twitter?: T;
+        github?: T;
+      };
+  startDate?: T;
+  featured?: T;
+  isActive?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services_select".
+ */
+export interface ServicesSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  shortDescription?: T;
+  description?: T;
+  featuredImage?: T;
+  icon?: T;
+  category?: T;
+  features?:
+    | T
+    | {
+        feature?: T;
+        id?: T;
+      };
+  pricing?:
+    | T
+    | {
+        startingPrice?: T;
+        priceType?: T;
+        priceNote?: T;
+      };
+  callToAction?:
+    | T
+    | {
+        buttonText?: T;
+        buttonLink?: T;
+      };
+  featured?: T;
+  isActive?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "content-blocks_select".
+ */
+export interface ContentBlocksSelect<T extends boolean = true> {
+  title?: T;
+  blockType?: T;
+  columns?:
+    | T
+    | {
+        width?: T;
+        content?: T;
+        id?: T;
+      };
+  content?: T;
+  heading?:
+    | T
+    | {
+        text?: T;
+        tag?: T;
+        color?: T;
+      };
+  image?: T;
+  gallery?:
+    | T
+    | {
+        image?: T;
+        caption?: T;
+        id?: T;
+      };
+  video?:
+    | T
+    | {
+        url?: T;
+        autoplay?: T;
+        controls?: T;
+        loop?: T;
+      };
+  quote?:
+    | T
+    | {
+        text?: T;
+        author?: T;
+        authorTitle?: T;
+        authorImage?: T;
+      };
+  button?:
+    | T
+    | {
+        text?: T;
+        url?: T;
+        style?: T;
+        size?: T;
+        openInNewTab?: T;
+      };
+  iconBox?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        description?: T;
+        link?: T;
+      };
+  accordion?:
+    | T
+    | {
+        title?: T;
+        content?: T;
+        isOpen?: T;
+        id?: T;
+      };
+  tabs?:
+    | T
+    | {
+        title?: T;
+        content?: T;
+        icon?: T;
+        id?: T;
+      };
+  contactForm?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        emailTo?: T;
+        fields?:
+          | T
+          | {
+              label?: T;
+              name?: T;
+              type?: T;
+              required?: T;
+              id?: T;
+            };
+      };
+  googleMaps?:
+    | T
+    | {
+        address?: T;
+        zoom?: T;
+        height?: T;
+      };
+  features?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        description?: T;
+        link?: T;
+        id?: T;
+      };
+  stats?:
+    | T
+    | {
+        number?: T;
+        label?: T;
+        icon?: T;
+        id?: T;
+      };
+  teamGrid?:
+    | T
+    | {
+        members?: T;
+        columns?: T;
+      };
+  postsGrid?:
+    | T
+    | {
+        category?: T;
+        count?: T;
+        columns?: T;
+      };
+  cta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        primaryButton?:
+          | T
+          | {
+              text?: T;
+              url?: T;
+            };
+        secondaryButton?:
+          | T
+          | {
+              text?: T;
+              url?: T;
+            };
+      };
+  progressBar?:
+    | T
+    | {
+        label?: T;
+        percentage?: T;
+        color?: T;
+        id?: T;
+      };
+  separator?:
+    | T
+    | {
+        style?: T;
+        width?: T;
+        color?: T;
+      };
+  styling?:
+    | T
+    | {
+        marginTop?: T;
+        marginBottom?: T;
+        paddingTop?: T;
+        paddingBottom?: T;
+        paddingLeft?: T;
+        paddingRight?: T;
+        backgroundColor?: T;
+        backgroundImage?: T;
+        backgroundPosition?: T;
+        backgroundSize?: T;
+        backgroundRepeat?: T;
+        backgroundGradient?: T;
+        borderWidth?: T;
+        borderStyle?: T;
+        borderColor?: T;
+        borderRadius?: T;
+        textAlign?: T;
+        textColor?: T;
+        fontSize?: T;
+        fontWeight?: T;
+        boxShadow?: T;
+        animation?: T;
+        animationDelay?: T;
+        animationDuration?: T;
+        hideOnMobile?: T;
+        hideOnTablet?: T;
+        hideOnDesktop?: T;
+        customCSS?: T;
+        customClassName?: T;
+      };
+  isActive?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "page-templates_select".
+ */
+export interface PageTemplatesSelect<T extends boolean = true> {
+  name?: T;
+  description?: T;
+  category?: T;
+  thumbnail?: T;
+  pageBuilder?:
+    | T
+    | {
+        contentBlock?:
+          | T
+          | {
+              block?: T;
+              id?: T;
+              blockName?: T;
+            };
+        richText?:
+          | T
+          | {
+              content?: T;
+              id?: T;
+              blockName?: T;
+            };
+        customHTML?:
+          | T
+          | {
+              html?: T;
+              css?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
+  tags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
+  isActive?: T;
+  isFeatured?: T;
+  metadata?:
+    | T
+    | {
+        author?: T;
+        version?: T;
+        compatibility?: T;
+        requiredPlugins?:
+          | T
+          | {
+              plugin?: T;
+              id?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -284,6 +1983,41 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-page".
+ */
+export interface HomePage {
+  id: number;
+  /**
+   * Overlay opacity for hero slider (0 - 1)
+   */
+  heroOverlayOpacity?: number | null;
+  /**
+   * Slider auto-play interval in milliseconds
+   */
+  autoPlayInterval?: number | null;
+  showRecentPosts?: boolean | null;
+  /**
+   * How many recent posts to display
+   */
+  recentPostsLimit?: number | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-page_select".
+ */
+export interface HomePageSelect<T extends boolean = true> {
+  heroOverlayOpacity?: T;
+  autoPlayInterval?: T;
+  showRecentPosts?: T;
+  recentPostsLimit?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
