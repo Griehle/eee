@@ -87,7 +87,7 @@ export default async function DynamicPage({ params }: PageProps) {
               className="prose max-w-none"
               dangerouslySetInnerHTML={{ 
                 __html: page.content.root.children
-                  .map((child: any) => (child as any).text || '')
+                  .map((child: { text?: string; type?: string }) => child.text || '')
                   .join(' ') 
               }}
             />

@@ -3,15 +3,10 @@ import React from 'react'
 import BlockRenderer from './BlockRenderer'
 import { serializeRichText } from '@/utils/serialize'
 
-interface PageBuilderBlock {
-  blockType: string
-  id?: string | null
-  blockName?: string | null
-  block?: any
-  content?: any
-  html?: string
-  css?: string | null
-}
+import type { Page, ContentBlock } from '@/payload-types'
+
+// Use the Payload-generated types for better compatibility
+type PageBuilderBlock = NonNullable<Page['pageBuilder']>[0]
 
 interface PageBuilderProps {
   blocks?: PageBuilderBlock[]
@@ -37,14 +32,18 @@ export default function PageBuilder({ blocks, className }: PageBuilderProps) {
         switch (block.blockType) {
           case 'contentBlock':
             // Render a content block from the blocks collection
-            if (block.block) {
-              return (
-                <BlockRenderer 
-                  key={key}
-                  block={block.block} 
-                  className="mb-6" 
-                />
-              )
+            if (block.blockType === 'contentBlock' && block.block) {
+              // Handle both ID reference and populated ContentBlock object
+              const contentBlock = typeof block.block === 'number' ? null : block.block as ContentBlock
+              if (contentBlock) {
+                return (
+                  <BlockRenderer 
+                    key={key}
+                    block={contentBlock} 
+                    className="mb-6" 
+                  />
+                )
+              }
             }
             return (
               <div key={key} className="bg-red-100 p-4 text-red-800 rounded mb-6">
@@ -54,7 +53,7 @@ export default function PageBuilder({ blocks, className }: PageBuilderProps) {
 
           case 'richText':
             // Render rich text content
-            if (block.content) {
+            if (block.blockType === 'richText' && block.content) {
               return (
                 <div key={key} className="prose max-w-none mb-6" dangerouslySetInnerHTML={{ __html: serializeRichText(block.content) }} />
               )
@@ -67,19 +66,22 @@ export default function PageBuilder({ blocks, className }: PageBuilderProps) {
 
           case 'customHTML':
             // Render custom HTML with optional CSS
-            return (
-              <div key={key} className="custom-html-block mb-6">
-                {block.css && (
-                  <style dangerouslySetInnerHTML={{ __html: block.css }} />
-                )}
-                <div dangerouslySetInnerHTML={{ __html: block.html || '' }} />
-              </div>
-            )
+            if (block.blockType === 'customHTML') {
+              return (
+                <div key={key} className="custom-html-block mb-6">
+                  {block.css && (
+                    <style dangerouslySetInnerHTML={{ __html: block.css }} />
+                  )}
+                  <div dangerouslySetInnerHTML={{ __html: block.html || '' }} />
+                </div>
+              )
+            }
+            break
 
           default:
             return (
               <div key={key} className="bg-gray-100 p-4 text-gray-600 rounded mb-6">
-                <p>Unknown block type: {block.blockType}</p>
+                <p>Unknown block type: {JSON.stringify(block)}</p>
               </div>
             )
         }

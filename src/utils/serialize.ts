@@ -1,4 +1,27 @@
-export function serializeRichText(content: any): string {
+interface LexicalNode {
+  type?: string
+  text?: string
+  children?: LexicalNode[]
+  tag?: string
+  listType?: 'number' | 'bullet'
+  url?: string
+  newTab?: boolean
+  bold?: boolean
+  italic?: boolean
+  underline?: boolean
+  strikethrough?: boolean
+  code?: boolean
+  [key: string]: any
+}
+
+interface LexicalContent {
+  root?: {
+    children?: LexicalNode[]
+  }
+  [key: string]: any
+}
+
+export function serializeRichText(content: LexicalContent | string | null | undefined): string {
   if (!content) return ''
   
   if (typeof content === 'string') return content
@@ -11,11 +34,11 @@ export function serializeRichText(content: any): string {
   return ''
 }
 
-function serializeChildren(children: any[]): string {
+function serializeChildren(children: LexicalNode[]): string {
   if (!Array.isArray(children)) return ''
   
   return children
-    .map((child: any) => {
+    .map((child: LexicalNode) => {
       if (child.type === 'paragraph') {
         const content = child.children ? serializeInlineContent(child.children) : ''
         return `<p>${content}</p>`
@@ -29,7 +52,7 @@ function serializeChildren(children: any[]): string {
       
       if (child.type === 'list') {
         const tag = child.listType === 'number' ? 'ol' : 'ul'
-        const items = child.children?.map((item: any) => {
+        const items = child.children?.map((item: LexicalNode) => {
           const itemContent = item.children ? serializeInlineContent(item.children) : ''
           return `<li>${itemContent}</li>`
         }).join('') || ''
@@ -67,11 +90,11 @@ function serializeChildren(children: any[]): string {
     .join('')
 }
 
-function serializeInlineContent(children: any[]): string {
+function serializeInlineContent(children: LexicalNode[]): string {
   if (!Array.isArray(children)) return ''
   
   return children
-    .map((child: any) => {
+    .map((child: LexicalNode) => {
       if (child.type === 'link') {
         const url = child.url || '#'
         const content = child.children ? serializeInlineContent(child.children) : ''
