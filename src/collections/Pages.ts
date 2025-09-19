@@ -216,5 +216,16 @@ export const Pages: CollectionConfig = {
         return data
       },
     ],
+    beforeValidate: [
+      async ({ data, req }) => {
+        // When publishing, ensure status is set to published
+        if (req.body && req.body._status === 'published') {
+          data.status = 'published'
+        } else if (req.body && req.body._status === 'draft') {
+          data.status = 'draft'
+        }
+        return data
+      },
+    ],
   },
 }

@@ -44,6 +44,7 @@ export const ContentBlocks: CollectionConfig = {
         { label: '💬 Quote/Testimonial', value: 'quote' },
         { label: '🔘 Button', value: 'button' },
         { label: '🔗 Icon Box', value: 'icon_box' },
+        { label: '⚡ Raw HTML', value: 'raw_html' },
         
         // Interactive Elements
         { label: '📋 Accordion', value: 'accordion' },
@@ -109,6 +110,24 @@ export const ContentBlocks: CollectionConfig = {
       admin: {
         description: 'Main content for this block',
         condition: (data) => ['text', 'quote', 'column', 'section'].includes(data.blockType),
+      },
+    },
+    {
+      name: 'htmlContent',
+      type: 'textarea',
+      admin: {
+        description: 'Raw HTML content - be careful with security!',
+        condition: (data) => ['raw_html'].includes(data.blockType),
+        rows: 10,
+      },
+    },
+    {
+      name: 'cssStyles',
+      type: 'textarea',
+      admin: {
+        description: 'Optional CSS styles for this HTML block',
+        condition: (data) => ['raw_html'].includes(data.blockType),
+        rows: 5,
       },
     },
     {
@@ -200,6 +219,36 @@ export const ContentBlocks: CollectionConfig = {
           name: 'loop',
           type: 'checkbox',
           defaultValue: false,
+        },
+        {
+          name: 'size',
+          type: 'select',
+          options: [
+            { label: 'Small (400px max)', value: 'small' },
+            { label: 'Medium (600px max)', value: 'medium' },
+            { label: 'Large (800px max)', value: 'large' },
+            { label: 'Extra Large (1000px max)', value: 'xl' },
+            { label: 'Full Width', value: 'full' },
+          ],
+          defaultValue: 'large',
+          admin: {
+            description: 'Maximum width of the video container',
+          },
+        },
+        {
+          name: 'aspectRatio',
+          type: 'select',
+          options: [
+            { label: '16:9 (Widescreen)', value: '16:9' },
+            { label: '4:3 (Standard)', value: '4:3' },
+            { label: '21:9 (Ultrawide)', value: '21:9' },
+            { label: '1:1 (Square)', value: '1:1' },
+            { label: '9:16 (Vertical)', value: '9:16' },
+          ],
+          defaultValue: '16:9',
+          admin: {
+            description: 'Aspect ratio for embed videos',
+          },
         },
       ],
       admin: {

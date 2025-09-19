@@ -20,6 +20,12 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   const payload = await getPayload({ config: payloadConfig })
   const { user } = await payload.auth({ headers })
 
+  // Get site branding data
+  const siteBranding = await payload.findGlobal({
+    slug: 'site-branding',
+    depth: 2, // Include media relationships
+  })
+
   // Transform user to match Header component expectations
   const headerUser = user ? {
     id: user.id.toString(),
@@ -31,7 +37,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <Header user={headerUser} />
+        <Header user={headerUser} branding={siteBranding} />
         <main>{children}</main>
         <Footer />
       </body>

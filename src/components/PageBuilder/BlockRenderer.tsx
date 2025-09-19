@@ -18,6 +18,7 @@ import AccordionBlock from './blocks/AccordionBlock'
 import TabsBlock from './blocks/TabsBlock'
 import CarouselBlock from './blocks/CarouselBlock'
 import FeaturesBlock from './blocks/FeaturesBlock'
+import RawHtmlBlock from './blocks/RawHtmlBlock'
 
 // Stub component for unimplemented blocks
 const StubBlock = ({ block }: { block: any }) => (
@@ -167,6 +168,8 @@ export default function BlockRenderer({ block, className }: BlockRendererProps) 
         return <ButtonBlock block={block} />
       case 'icon_box':
         return <IconBoxBlock block={block} />
+      case 'raw_html':
+        return <RawHtmlBlock block={block} />
       
       // Interactive Elements
       case 'accordion':

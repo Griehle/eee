@@ -21,6 +21,7 @@ import { Services } from './collections/Services'
 import { ContentBlocks } from './collections/ContentBlocks'
 import { PageTemplates } from './collections/PageTemplates'
 import { HomePage } from './globals/HomePage'
+import { SiteBranding } from './globals/SiteBranding'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -47,7 +48,7 @@ export default buildConfig({
     ContentBlocks,
     PageTemplates,
   ],
-  globals: [HomePage],
+  globals: [HomePage, SiteBranding],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

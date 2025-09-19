@@ -115,7 +115,7 @@ export default async function HomePage() {
       })}
 
       {/* Static Features Section - could also be made CMS-manageable */}
-      <section className="features">
+      {/*<section className="features">
         <div className="features-content">
           <h2>Why Choose Our Platform?</h2>
           <div className="features-grid">
@@ -145,7 +145,7 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </section>*/}
 
       {/* Recent Posts Section */}
       {showRecentPosts && recentPosts.length > 0 && (

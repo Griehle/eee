@@ -108,9 +108,11 @@ export interface Config {
   };
   globals: {
     'home-page': HomePage;
+    'site-branding': SiteBranding;
   };
   globalsSelect: {
     'home-page': HomePageSelect<false> | HomePageSelect<true>;
+    'site-branding': SiteBrandingSelect<false> | SiteBrandingSelect<true>;
   };
   locale: null;
   user: User & {
@@ -504,6 +506,7 @@ export interface ContentBlock {
     | 'quote'
     | 'button'
     | 'icon_box'
+    | 'raw_html'
     | 'accordion'
     | 'tabs'
     | 'carousel'
@@ -559,6 +562,14 @@ export interface ContentBlock {
     [k: string]: unknown;
   } | null;
   /**
+   * Raw HTML content - be careful with security!
+   */
+  htmlContent?: string | null;
+  /**
+   * Optional CSS styles for this HTML block
+   */
+  cssStyles?: string | null;
+  /**
    * Heading configuration
    */
   heading?: {
@@ -594,6 +605,14 @@ export interface ContentBlock {
     autoplay?: boolean | null;
     controls?: boolean | null;
     loop?: boolean | null;
+    /**
+     * Maximum width of the video container
+     */
+    size?: ('small' | 'medium' | 'large' | 'xl' | 'full') | null;
+    /**
+     * Aspect ratio for embed videos
+     */
+    aspectRatio?: ('16:9' | '4:3' | '21:9' | '1:1' | '9:16') | null;
   };
   /**
    * Quote/testimonial content
@@ -1706,6 +1725,8 @@ export interface ContentBlocksSelect<T extends boolean = true> {
         id?: T;
       };
   content?: T;
+  htmlContent?: T;
+  cssStyles?: T;
   heading?:
     | T
     | {
@@ -1728,6 +1749,8 @@ export interface ContentBlocksSelect<T extends boolean = true> {
         autoplay?: T;
         controls?: T;
         loop?: T;
+        size?: T;
+        aspectRatio?: T;
       };
   quote?:
     | T
@@ -2007,6 +2030,129 @@ export interface HomePage {
   createdAt?: string | null;
 }
 /**
+ * Manage your site branding, logo, and header configuration
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-branding".
+ */
+export interface SiteBranding {
+  id: number;
+  /**
+   * Upload your site logo (recommended: PNG with transparent background)
+   */
+  logo?: (number | null) | Media;
+  /**
+   * Alt text for your logo (for accessibility)
+   */
+  logoAlt?: string | null;
+  /**
+   * Your site name (displayed if no logo or as fallback)
+   */
+  siteName: string;
+  /**
+   * Optional tagline or slogan
+   */
+  tagline?: string | null;
+  /**
+   * Choose your header layout style
+   */
+  headerStyle?: ('standard' | 'centered' | 'split' | 'stacked') | null;
+  /**
+   * Show tagline below logo in header
+   */
+  showTaglineInHeader?: boolean | null;
+  /**
+   * Manage your main navigation links
+   */
+  navigationLinks?:
+    | {
+        label: string;
+        /**
+         * Use relative URLs like "/about" or full URLs
+         */
+        url: string;
+        openInNewTab?: boolean | null;
+        /**
+         * Uncheck to temporarily hide this link
+         */
+        isActive?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  headerStyling?: {
+    /**
+     * Header background color (e.g., #ffffff, rgba(255,255,255,0.9))
+     */
+    backgroundColor?: string | null;
+    /**
+     * Header text color (e.g., #333333)
+     */
+    textColor?: string | null;
+    /**
+     * Maximum height for logo (e.g., 50px, 3rem)
+     */
+    logoMaxHeight?: string | null;
+    /**
+     * Make header stick to top when scrolling
+     */
+    isSticky?: boolean | null;
+    /**
+     * Show shadow below header
+     */
+    showShadow?: boolean | null;
+    /**
+     * Custom CSS for advanced header styling
+     */
+    customCSS?: string | null;
+  };
+  socialMedia?: {
+    /**
+     * Show social media icons in header
+     */
+    showInHeader?: boolean | null;
+    /**
+     * Facebook page URL
+     */
+    facebook?: string | null;
+    /**
+     * Twitter/X profile URL
+     */
+    twitter?: string | null;
+    /**
+     * Instagram profile URL
+     */
+    instagram?: string | null;
+    /**
+     * LinkedIn profile URL
+     */
+    linkedin?: string | null;
+    /**
+     * YouTube channel URL
+     */
+    youtube?: string | null;
+  };
+  headerContact?: {
+    /**
+     * Show contact info in header
+     */
+    showContactInfo?: boolean | null;
+    /**
+     * Phone number
+     */
+    phone?: string | null;
+    /**
+     * Email address
+     */
+    email?: string | null;
+    /**
+     * Short address (e.g., "New York, NY")
+     */
+    address?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "home-page_select".
  */
@@ -2015,6 +2161,58 @@ export interface HomePageSelect<T extends boolean = true> {
   autoPlayInterval?: T;
   showRecentPosts?: T;
   recentPostsLimit?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-branding_select".
+ */
+export interface SiteBrandingSelect<T extends boolean = true> {
+  logo?: T;
+  logoAlt?: T;
+  siteName?: T;
+  tagline?: T;
+  headerStyle?: T;
+  showTaglineInHeader?: T;
+  navigationLinks?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        openInNewTab?: T;
+        isActive?: T;
+        id?: T;
+      };
+  headerStyling?:
+    | T
+    | {
+        backgroundColor?: T;
+        textColor?: T;
+        logoMaxHeight?: T;
+        isSticky?: T;
+        showShadow?: T;
+        customCSS?: T;
+      };
+  socialMedia?:
+    | T
+    | {
+        showInHeader?: T;
+        facebook?: T;
+        twitter?: T;
+        instagram?: T;
+        linkedin?: T;
+        youtube?: T;
+      };
+  headerContact?:
+    | T
+    | {
+        showContactInfo?: T;
+        phone?: T;
+        email?: T;
+        address?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
