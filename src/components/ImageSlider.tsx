@@ -19,16 +19,22 @@ interface ImageSliderProps {
 
 export default function ImageSlider({ slides, autoPlay = true, interval = 5000 }: ImageSliderProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
+  const [isHydrated, setIsHydrated] = useState(false)
+
+  // Hydration effect
+  useEffect(() => {
+    setIsHydrated(true)
+  }, [])
 
   useEffect(() => {
-    if (autoPlay && slides.length > 1) {
+    if (isHydrated && autoPlay && slides.length > 1) {
       const timer = setInterval(() => {
         setCurrentSlide((prev) => (prev + 1) % slides.length)
       }, interval)
 
       return () => clearInterval(timer)
     }
-  }, [autoPlay, interval, slides.length])
+  }, [isHydrated, autoPlay, interval, slides.length])
 
   const goToSlide = (index: number) => {
     setCurrentSlide(index)
@@ -52,7 +58,7 @@ export default function ImageSlider({ slides, autoPlay = true, interval = 5000 }
         {slides.map((slide, index) => (
           <div
             key={slide.id}
-            className={`slide ${index === currentSlide ? 'active' : ''}`}
+            className={`slide ${index === (isHydrated ? currentSlide : 0) ? 'active' : ''}`}
             style={{
               backgroundImage: `url(${slide.image})`,
               backgroundSize: 'cover',
@@ -99,7 +105,7 @@ export default function ImageSlider({ slides, autoPlay = true, interval = 5000 }
             {slides.map((_, index) => (
               <button
                 key={index}
-                className={`slider-dot ${index === currentSlide ? 'active' : ''}`}
+                className={`slider-dot ${index === (isHydrated ? currentSlide : 0) ? 'active' : ''}`}
                 onClick={() => goToSlide(index)}
                 aria-label={`Go to slide ${index + 1}`}
               />

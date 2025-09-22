@@ -97,11 +97,13 @@ svg {
   vertical-align: middle;
 }
 
-/* Header Styles */
+/* Enhanced Header Styles with Branding Support */
 .header {
   background: var(--card-background);
   border-bottom: 1px solid var(--border-color);
   padding: 1rem 0;
+  position: relative;
+  z-index: 100;
 }
 
 .nav {
@@ -113,16 +115,50 @@ svg {
   align-items: center;
 }
 
-.nav-brand a {
+/* Brand/Logo Styles */
+.nav-brand {
   text-decoration: none;
   color: var(--text-color);
-  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
 }
 
+.brand-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.brand-tagline {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin-top: 0.25rem;
+}
+
+/* Contact Info Bar */
+.nav-contact {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.5rem 0;
+  text-align: center;
+  font-size: 0.9rem;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Navigation Styles */
 .nav-menu {
   display: flex;
   align-items: center;
   gap: 2rem;
+  flex-wrap: wrap;
 }
 
 .nav-link {
@@ -130,22 +166,44 @@ svg {
   color: var(--text-color);
   padding: 0.5rem 1rem;
   border-radius: 4px;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .nav-link:hover {
   background-color: var(--border-color);
+  transform: translateY(-1px);
 }
 
-.nav-auth {
+/* Social Media Links */
+.nav-social {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
 
+.social-link {
+  text-decoration: none;
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.social-link:hover {
+  transform: scale(1.2);
+}
+
+/* Auth Section */
+.nav-auth {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
 .nav-welcome {
   color: var(--text-color);
   margin-right: 1rem;
+  white-space: nowrap;
 }
 
 .register {
@@ -156,6 +214,137 @@ svg {
 .logout {
   background-color: var(--danger-color);
   color: white;
+}
+
+/* Header Layout Styles */
+
+/* Standard Header (default) */
+.header-style-standard .nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-style-standard .nav-left {
+  flex: 0 0 auto;
+}
+
+.header-style-standard .nav-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.header-style-standard .nav-right {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Centered Header */
+.header-style-centered .nav {
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.header-style-centered .nav-section {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.header-style-centered .nav-left {
+  justify-content: flex-start;
+}
+
+.header-style-centered .nav-center {
+  justify-content: center;
+}
+
+.header-style-centered .nav-right {
+  justify-content: flex-end;
+}
+
+.header-style-centered .nav-row-2 {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Split Header */
+.header-style-split .nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-style-split .nav-left {
+  flex: 0 0 auto;
+}
+
+.header-style-split .nav-right {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* Stacked Header */
+.header-style-stacked .nav {
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.header-style-stacked .nav-row-1 {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-style-stacked .nav-row-2 {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .nav {
+    padding: 0 1rem;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  
+  .nav-menu {
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  .nav-auth {
+    justify-content: center;
+  }
+  
+  .nav-contact {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  /* Force all header styles to stack on mobile */
+  .header-style-standard .nav,
+  .header-style-split .nav,
+  .header-style-centered .nav,
+  .header-style-stacked .nav {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .header-style-standard .nav-center,
+  .header-style-standard .nav-right {
+    justify-content: center;
+  }
 }
 
 /* Footer Styles */

@@ -102,6 +102,9 @@ export const SiteBranding: GlobalConfig = {
       defaultValue: [
         { label: 'Home', url: '/', openInNewTab: false, isActive: true },
         { label: 'About', url: '/about', openInNewTab: false, isActive: true },
+        { label: 'Services', url: '/services', openInNewTab: false, isActive: true },
+        { label: 'Portfolio', url: '/portfolio', openInNewTab: false, isActive: true },
+        { label: 'Blog', url: '/blog', openInNewTab: false, isActive: true },
         { label: 'Contact', url: '/contact', openInNewTab: false, isActive: true },
       ],
       admin: {

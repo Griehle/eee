@@ -7,6 +7,7 @@ import config from '@/payload.config'
 import ImageSlider from '@/components/ImageSlider'
 import ContentSection from '@/components/ContentSection'
 import { serializeRichText } from '@/utils/serialize'
+import { formatDateSafe } from '@/utils/dateFormat'
 
 export default async function HomePage() {
   const headers = await getHeaders()
@@ -159,7 +160,7 @@ export default async function HomePage() {
                   <p>{post.excerpt}</p>
                   <div className="post-meta">
                     <span>By {post.author?.firstName} {post.author?.lastName}</span>
-                    <span>{new Date(post.publishedDate || post.createdAt).toLocaleDateString()}</span>
+                    <span>{formatDateSafe(post.publishedDate || post.createdAt)}</span>
                   </div>
                   <Link href={`/posts/${post.slug}`} className="post-link">
                     Read More →
