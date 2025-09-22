@@ -20,6 +20,7 @@ import { TeamMembers } from './collections/TeamMembers'
 import { Services } from './collections/Services'
 import { ContentBlocks } from './collections/ContentBlocks'
 import { PageTemplates } from './collections/PageTemplates'
+import { PDFDocuments } from './collections/PDFDocuments'
 import { HomePage } from './globals/HomePage'
 import { SiteBranding } from './globals/SiteBranding'
 
@@ -47,6 +48,7 @@ export default buildConfig({
     Services,
     ContentBlocks,
     PageTemplates,
+    PDFDocuments,
   ],
   globals: [HomePage, SiteBranding],
   editor: lexicalEditor(),

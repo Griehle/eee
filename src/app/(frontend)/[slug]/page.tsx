@@ -3,6 +3,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { Page } from '@/payload-types'
 import PageBuilder from '@/components/PageBuilder/PageBuilder'
+import { formatDateSafe } from '@/utils/dateFormat'
 
 interface PageProps {
   params: Promise<{
@@ -74,7 +75,7 @@ export default async function DynamicPage({ params }: PageProps) {
           </h1>
           {page.publishedDate && (
             <p className="text-gray-600">
-              Published on {new Date(page.publishedDate).toLocaleDateString()}
+              Published on {formatDateSafe(page.publishedDate)}
             </p>
           )}
         </header>

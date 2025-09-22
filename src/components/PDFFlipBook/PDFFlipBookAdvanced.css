@@ -1,0 +1,662 @@
+/* Advanced PDF FlipBook Styles */
+.pdf-flipbook-container.advanced {
+  position: relative;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+  background: linear-gradient(145deg, #f0f2f5, #ffffff);
+  border-radius: 16px;
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.5);
+  transition: all 0.3s ease;
+}
+
+.pdf-flipbook-container.advanced.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 20px;
+  z-index: 9999;
+  border-radius: 0;
+  background: #1a1a1a;
+  color: #ffffff;
+}
+
+/* Loading and Error States */
+.pdf-flipbook-container.loading,
+.pdf-flipbook-container.error {
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-message {
+  text-align: center;
+  padding: 40px;
+  background: #ffeef0;
+  border: 2px solid #ff6b7a;
+  border-radius: 12px;
+  color: #d63384;
+}
+
+.error-message h3 {
+  margin: 0 0 16px 0;
+  color: #d63384;
+}
+
+.error-message button {
+  padding: 10px 20px;
+  background: #d63384;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 16px;
+}
+
+/* Enhanced Toolbar */
+.flipbook-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+  color: white;
+}
+
+.fullscreen .flipbook-toolbar {
+  background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+}
+
+.toolbar-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toolbar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.toolbar-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.toolbar-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.toolbar-btn.active {
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.page-info {
+  font-weight: 600;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  min-width: 100px;
+  text-align: center;
+}
+
+.zoom-level {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  min-width: 45px;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Enhanced Search Section */
+.search-section {
+  position: relative;
+  flex-grow: 1;
+  max-width: 350px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  font-size: 14px;
+  color: #2c3e50;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+.search-input::placeholder {
+  color: rgba(44, 62, 80, 0.6);
+}
+
+.search-spinner {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+}
+
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  margin-top: 4px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.search-result {
+  padding: 12px 16px;
+  cursor: pointer;
+  color: #2c3e50;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  transition: background-color 0.2s ease;
+}
+
+.search-result:hover {
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.search-result:last-child {
+  border-bottom: none;
+}
+
+/* Enhanced FlipBook Wrapper */
+.flipbook-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  perspective: 2000px;
+  transition: transform 0.3s ease;
+}
+
+.fullscreen .flipbook-wrapper {
+  transform: none !important;
+  margin: 20px 0;
+}
+
+.flipbook {
+  box-shadow: 
+    0 25px 60px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.fullscreen .flipbook {
+  box-shadow: 
+    0 30px 80px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Enhanced PDF Pages */
+.pdf-page {
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e0e0e0;
+  box-shadow: 
+    inset 0 0 20px rgba(0, 0, 0, 0.05),
+    0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.pdf-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(145deg, transparent, rgba(0, 0, 0, 0.02));
+  pointer-events: none;
+}
+
+.pdf-page canvas {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 4px;
+  transition: transform 0.3s ease;
+}
+
+/* Enhanced Cover Page */
+.pdf-cover {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.pdf-cover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.cover-content {
+  position: relative;
+  z-index: 1;
+  padding: 40px;
+}
+
+.cover-content h2 {
+  margin: 0 0 16px 0;
+  font-size: 2.2rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(45deg, #ffffff, #f8f9fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cover-content p {
+  margin: 0 0 20px 0;
+  font-size: 1.2rem;
+  opacity: 0.9;
+  animation: pulse 2s ease-in-out infinite;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.cover-stats {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Enhanced Thumbnail Navigation */
+.thumbnail-nav {
+  width: 100%;
+  max-width: 900px;
+  max-height: 140px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 249, 250, 0.9));
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.fullscreen .thumbnail-nav {
+  background: linear-gradient(135deg, rgba(44, 62, 80, 0.9), rgba(52, 73, 94, 0.9));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.thumbnails {
+  display: flex;
+  gap: 12px;
+  min-width: max-content;
+  padding: 4px;
+}
+
+.thumbnail {
+  position: relative;
+  cursor: pointer;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.fullscreen .thumbnail {
+  background: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.thumbnail:hover {
+  transform: scale(1.1) translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  border-color: rgba(102, 126, 234, 0.5);
+}
+
+.thumbnail.active {
+  border-color: #667eea;
+  box-shadow: 
+    0 0 20px rgba(102, 126, 234, 0.4),
+    0 8px 25px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+}
+
+.thumbnail canvas {
+  display: block;
+  border-radius: 6px;
+}
+
+.thumbnail-number {
+  position: absolute;
+  bottom: 4px;
+  right: 6px;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.9));
+  color: white;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Cover Thumbnail */
+.cover-thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 80px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  font-size: 12px;
+}
+
+.cover-thumbnail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.cover-thumbnail span:first-child {
+  font-size: 20px;
+}
+
+/* Keyboard Shortcuts Help */
+.shortcuts-help {
+  position: absolute;
+  bottom: -35px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.pdf-flipbook-container:hover .shortcuts-help {
+  opacity: 1;
+}
+
+.shortcuts-help small {
+  font-size: 12px;
+  color: #6c757d;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 6px 12px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.fullscreen .shortcuts-help small {
+  background: rgba(44, 62, 80, 0.9);
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Enhanced Animations */
+@keyframes pulse {
+  0%, 100% { 
+    opacity: 0.9; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.6; 
+    transform: scale(1.02);
+  }
+}
+
+.spinner {
+  width: 45px;
+  height: 45px;
+  border: 4px solid rgba(102, 126, 234, 0.1);
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Advanced Mobile Responsive */
+@media (max-width: 768px) {
+  .pdf-flipbook-container.advanced {
+    padding: 12px;
+    border-radius: 12px;
+  }
+  
+  .flipbook-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px;
+    gap: 8px;
+  }
+  
+  .toolbar-section {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .toolbar-section.search-section {
+    order: -1;
+    max-width: none;
+  }
+  
+  .search-input {
+    padding: 10px 12px;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  .toolbar-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 12px;
+  }
+  
+  .flipbook-wrapper {
+    margin-bottom: 12px;
+  }
+  
+  .cover-content h2 {
+    font-size: 1.6rem;
+  }
+  
+  .cover-content {
+    padding: 24px;
+  }
+  
+  .thumbnail-nav {
+    margin-top: 12px;
+    padding: 12px;
+    max-height: 100px;
+  }
+  
+  .shortcuts-help {
+    position: relative;
+    bottom: auto;
+    margin-top: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pdf-flipbook-container.advanced {
+    padding: 8px;
+  }
+  
+  .flipbook-toolbar {
+    padding: 8px;
+  }
+  
+  .toolbar-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 11px;
+  }
+  
+  .page-info {
+    font-size: 14px;
+    min-width: 80px;
+  }
+  
+  .zoom-level {
+    font-size: 10px;
+    min-width: 35px;
+  }
+  
+  .cover-content h2 {
+    font-size: 1.3rem;
+  }
+  
+  .cover-content p {
+    font-size: 1rem;
+  }
+  
+  .cover-content {
+    padding: 16px;
+  }
+  
+  .search-input {
+    padding: 8px 10px;
+    font-size: 14px;
+  }
+}
+
+/* High-DPI Display Support */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .flipbook {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .pdf-flipbook-container.advanced {
+    background: linear-gradient(145deg, #2c3e50, #34495e);
+    color: #ecf0f1;
+    box-shadow: 
+      0 20px 50px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
+  
+  .thumbnail-nav {
+    background: linear-gradient(135deg, rgba(44, 62, 80, 0.9), rgba(52, 73, 94, 0.9));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .shortcuts-help small {
+    background: rgba(44, 62, 80, 0.9);
+    color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Custom Scrollbar for Search Results and Thumbnails */
+.search-results::-webkit-scrollbar,
+.thumbnail-nav::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.search-results::-webkit-scrollbar-track,
+.thumbnail-nav::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.search-results::-webkit-scrollbar-thumb,
+.thumbnail-nav::-webkit-scrollbar-thumb {
+  background: rgba(102, 126, 234, 0.6);
+  border-radius: 3px;
+}
+
+.search-results::-webkit-scrollbar-thumb:hover,
+.thumbnail-nav::-webkit-scrollbar-thumb:hover {
+  background: rgba(102, 126, 234, 0.8);
+}
+
+/* Print Styles */
+@media print {
+  .pdf-flipbook-container.advanced {
+    box-shadow: none;
+    background: white;
+  }
+  
+  .flipbook-toolbar,
+  .thumbnail-nav,
+  .shortcuts-help {
+    display: none;
+  }
+}

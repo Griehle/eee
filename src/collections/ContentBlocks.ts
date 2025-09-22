@@ -93,12 +93,82 @@ export const ContentBlocks: CollectionConfig = {
           defaultValue: '12',
         },
         {
+          name: 'columnBlocks',
+          type: 'blocks',
+          label: 'Column Content',
+          blocks: [
+            {
+              slug: 'contentBlock',
+              labels: {
+                singular: 'Content Block',
+                plural: 'Content Blocks',
+              },
+              fields: [
+                {
+                  name: 'block',
+                  type: 'relationship',
+                  relationTo: 'content-blocks',
+                  required: true,
+                  admin: {
+                    description: 'Select a content block to include in this column',
+                  },
+                },
+              ],
+            },
+            {
+              slug: 'richText',
+              labels: {
+                singular: 'Rich Text',
+                plural: 'Rich Text',
+              },
+              fields: [
+                {
+                  name: 'content',
+                  type: 'richText',
+                  required: true,
+                },
+              ],
+            },
+            {
+              slug: 'customHTML',
+              labels: {
+                singular: 'Custom HTML',
+                plural: 'Custom HTML',
+              },
+              fields: [
+                {
+                  name: 'html',
+                  type: 'textarea',
+                  required: true,
+                  admin: {
+                    description: 'Custom HTML code',
+                  },
+                },
+                {
+                  name: 'css',
+                  type: 'textarea',
+                  admin: {
+                    description: 'Optional CSS styles',
+                  },
+                },
+              ],
+            },
+          ],
+          admin: {
+            description: 'Add content blocks, text, or HTML to this column',
+          },
+        },
+        {
           name: 'content',
           type: 'richText',
+          admin: {
+            description: 'Legacy rich text content (use Column Content above for more flexibility)',
+            condition: (data, siblingData) => !siblingData?.columnBlocks || siblingData.columnBlocks.length === 0,
+          },
         },
       ],
       admin: {
-        description: 'Define columns for this row',
+        description: 'Define columns for this row - each column can contain multiple content blocks',
         condition: (data) => ['row'].includes(data.blockType),
       },
     },

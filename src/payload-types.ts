@@ -80,6 +80,7 @@ export interface Config {
     services: Service;
     'content-blocks': ContentBlock;
     'page-templates': PageTemplate;
+    'pdf-documents': PdfDocument;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -99,6 +100,7 @@ export interface Config {
     services: ServicesSelect<false> | ServicesSelect<true>;
     'content-blocks': ContentBlocksSelect<false> | ContentBlocksSelect<true>;
     'page-templates': PageTemplatesSelect<false> | PageTemplatesSelect<true>;
+    'pdf-documents': PdfDocumentsSelect<false> | PdfDocumentsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -520,11 +522,63 @@ export interface ContentBlock {
     | 'progress_bar'
     | 'separator';
   /**
-   * Define columns for this row
+   * Define columns for this row - each column can contain multiple content blocks
    */
   columns?:
     | {
         width?: ('1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12') | null;
+        /**
+         * Add content blocks, text, or HTML to this column
+         */
+        columnBlocks?:
+          | (
+              | {
+                  /**
+                   * Select a content block to include in this column
+                   */
+                  block: number | ContentBlock;
+                  id?: string | null;
+                  blockName?: string | null;
+                  blockType: 'contentBlock';
+                }
+              | {
+                  content: {
+                    root: {
+                      type: string;
+                      children: {
+                        type: string;
+                        version: number;
+                        [k: string]: unknown;
+                      }[];
+                      direction: ('ltr' | 'rtl') | null;
+                      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                      indent: number;
+                      version: number;
+                    };
+                    [k: string]: unknown;
+                  };
+                  id?: string | null;
+                  blockName?: string | null;
+                  blockType: 'richText';
+                }
+              | {
+                  /**
+                   * Custom HTML code
+                   */
+                  html: string;
+                  /**
+                   * Optional CSS styles
+                   */
+                  css?: string | null;
+                  id?: string | null;
+                  blockName?: string | null;
+                  blockType: 'customHTML';
+                }
+            )[]
+          | null;
+        /**
+         * Legacy rich text content (use Column Content above for more flexibility)
+         */
         content?: {
           root: {
             type: string;
@@ -1328,6 +1382,79 @@ export interface Service {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pdf-documents".
+ */
+export interface PdfDocument {
+  id: number;
+  /**
+   * The title of the PDF document
+   */
+  title: string;
+  /**
+   * Brief description of the PDF document
+   */
+  description?: string | null;
+  /**
+   * Upload the PDF file
+   */
+  pdfFile: number | Media;
+  category?: ('brochure' | 'manual' | 'catalog' | 'report' | 'book' | 'magazine' | 'other') | null;
+  /**
+   * Optional thumbnail image for the document
+   */
+  thumbnail?: (number | null) | Media;
+  settings?: {
+    /**
+     * Display a custom cover page before the PDF
+     */
+    showCover?: boolean | null;
+    /**
+     * Width of the flipbook in pixels
+     */
+    width?: number | null;
+    /**
+     * Height of the flipbook in pixels
+     */
+    height?: number | null;
+    /**
+     * Allow users to download the PDF
+     */
+    enableDownload?: boolean | null;
+    /**
+     * Allow fullscreen viewing
+     */
+    enableFullscreen?: boolean | null;
+  };
+  /**
+   * Check to make this document publicly visible
+   */
+  isPublished?: boolean | null;
+  publishedAt?: string | null;
+  /**
+   * Add tags to help categorize and search documents
+   */
+  tags?: string[] | null;
+  /**
+   * Author or creator of the document
+   */
+  author?: string | null;
+  /**
+   * URL-friendly version of the title
+   */
+  slug?: string | null;
+  /**
+   * Number of times this document has been viewed
+   */
+  viewCount?: number | null;
+  /**
+   * Number of times this document has been downloaded
+   */
+  downloadCount?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -1384,6 +1511,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'page-templates';
         value: number | PageTemplate;
+      } | null)
+    | ({
+        relationTo: 'pdf-documents';
+        value: number | PdfDocument;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -1721,6 +1852,32 @@ export interface ContentBlocksSelect<T extends boolean = true> {
     | T
     | {
         width?: T;
+        columnBlocks?:
+          | T
+          | {
+              contentBlock?:
+                | T
+                | {
+                    block?: T;
+                    id?: T;
+                    blockName?: T;
+                  };
+              richText?:
+                | T
+                | {
+                    content?: T;
+                    id?: T;
+                    blockName?: T;
+                  };
+              customHTML?:
+                | T
+                | {
+                    html?: T;
+                    css?: T;
+                    id?: T;
+                    blockName?: T;
+                  };
+            };
         content?: T;
         id?: T;
       };
@@ -1972,6 +2129,35 @@ export interface PageTemplatesSelect<T extends boolean = true> {
               id?: T;
             };
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pdf-documents_select".
+ */
+export interface PdfDocumentsSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  pdfFile?: T;
+  category?: T;
+  thumbnail?: T;
+  settings?:
+    | T
+    | {
+        showCover?: T;
+        width?: T;
+        height?: T;
+        enableDownload?: T;
+        enableFullscreen?: T;
+      };
+  isPublished?: T;
+  publishedAt?: T;
+  tags?: T;
+  author?: T;
+  slug?: T;
+  viewCount?: T;
+  downloadCount?: T;
   updatedAt?: T;
   createdAt?: T;
 }
