@@ -45,26 +45,7 @@ export default async function HomePage() {
     depth: 2, // Include media relationships
   })
 
-  // Get recent posts if enabled
-  const showRecentPosts = homePageData?.showRecentPosts ?? true
-  const recentPostsLimit = homePageData?.recentPostsLimit ?? 3
-  let recentPosts: any[] = []
-  
-  if (showRecentPosts) {
-    const postsResult = await payload.find({
-      collection: 'posts',
-      where: {
-        status: {
-          equals: 'published',
-        },
-      },
-      sort: '-publishedDate',
-      limit: recentPostsLimit,
-    })
-    recentPosts = postsResult.docs
-  }
-
-  // Transform slider data for the ImageSlider component
+  // Transform slider data
   const sliderSlides = sliderData.map((slide: any, index: number) => ({
     id: slide.id || index + 1,
     image: typeof slide.image === 'object' ? slide.image.url : slide.image,
@@ -148,34 +129,6 @@ export default async function HomePage() {
         </div>
       </section>*/}
 
-      {/* Recent Posts Section */}
-      {showRecentPosts && recentPosts.length > 0 && (
-        <section className="recent-posts">
-          <div className="posts-content">
-            <h2>Latest from Our Blog</h2>
-            <div className="posts-grid">
-              {recentPosts.map((post: any) => (
-                <article key={post.id} className="post-card">
-                  <h3>{post.title}</h3>
-                  <p>{post.excerpt}</p>
-                  <div className="post-meta">
-                    <span>By {post.author?.firstName} {post.author?.lastName}</span>
-                    <span>{formatDateSafe(post.publishedDate || post.createdAt)}</span>
-                  </div>
-                  <Link href={`/posts/${post.slug}`} className="post-link">
-                    Read More →
-                  </Link>
-                </article>
-              ))}
-            </div>
-            <div className="posts-cta">
-              <Link href="/posts" className="btn btn-secondary">
-                View All Posts
-              </Link>
-            </div>
-          </div>
-        </section>
-      )}
     </div>
   )
 }

@@ -71,8 +71,6 @@ export interface Config {
     media: Media;
     'media-categories': MediaCategory;
     pages: Page;
-    posts: Post;
-    categories: Category;
     'home-slider': HomeSlider;
     'home-section': HomeSection;
     testimonials: Testimonial;
@@ -91,8 +89,6 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     'media-categories': MediaCategoriesSelect<false> | MediaCategoriesSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
-    posts: PostsSelect<false> | PostsSelect<true>;
-    categories: CategoriesSelect<false> | CategoriesSelect<true>;
     'home-slider': HomeSliderSelect<false> | HomeSliderSelect<true>;
     'home-section': HomeSectionSelect<false> | HomeSectionSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
@@ -377,19 +373,7 @@ export interface PageTemplate {
    * Template category
    */
   category?:
-    | (
-        | 'homepage'
-        | 'about'
-        | 'contact'
-        | 'services'
-        | 'team'
-        | 'blog'
-        | 'portfolio'
-        | 'pricing'
-        | 'faq'
-        | 'landing'
-        | 'other'
-      )
+    | ('homepage' | 'about' | 'contact' | 'services' | 'team' | 'portfolio' | 'pricing' | 'faq' | 'landing' | 'other')
     | null;
   /**
    * Preview image for this template
@@ -517,7 +501,6 @@ export interface ContentBlock {
     | 'features'
     | 'stats'
     | 'team_grid'
-    | 'posts_grid'
     | 'cta'
     | 'progress_bar'
     | 'separator'
@@ -809,14 +792,6 @@ export interface ContentBlock {
    */
   teamGrid?: {
     members?: (number | TeamMember)[] | null;
-    columns?: ('2' | '3' | '4') | null;
-  };
-  /**
-   * Posts grid configuration
-   */
-  postsGrid?: {
-    category?: (number | null) | Category;
-    count?: number | null;
     columns?: ('2' | '3' | '4') | null;
   };
   /**
@@ -1126,21 +1101,6 @@ export interface TeamMember {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories".
- */
-export interface Category {
-  id: number;
-  name: string;
-  description?: string | null;
-  /**
-   * URL-friendly version of the category name
-   */
-  slug: string;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pdf-documents".
  */
 export interface PdfDocument {
@@ -1211,45 +1171,6 @@ export interface PdfDocument {
   downloadCount?: number | null;
   updatedAt: string;
   createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "posts".
- */
-export interface Post {
-  id: number;
-  title: string;
-  /**
-   * This will be the URL path for this post
-   */
-  slug: string;
-  /**
-   * Brief description shown in post listings
-   */
-  excerpt: string;
-  content: {
-    root: {
-      type: string;
-      children: {
-        type: string;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  featuredImage?: (number | null) | Media;
-  status?: ('draft' | 'published') | null;
-  publishedDate?: string | null;
-  author: number | User;
-  categories?: (number | Category)[] | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
 }
 /**
  * 📸 Manage up to 10 slider images for the home page hero section. Recommended image size: 1920x800px or larger.
@@ -1524,14 +1445,6 @@ export interface PayloadLockedDocument {
         value: number | Page;
       } | null)
     | ({
-        relationTo: 'posts';
-        value: number | Post;
-      } | null)
-    | ({
-        relationTo: 'categories';
-        value: number | Category;
-      } | null)
-    | ({
         relationTo: 'home-slider';
         value: number | HomeSlider;
       } | null)
@@ -1745,35 +1658,6 @@ export interface PagesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "posts_select".
- */
-export interface PostsSelect<T extends boolean = true> {
-  title?: T;
-  slug?: T;
-  excerpt?: T;
-  content?: T;
-  featuredImage?: T;
-  status?: T;
-  publishedDate?: T;
-  author?: T;
-  categories?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  _status?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories_select".
- */
-export interface CategoriesSelect<T extends boolean = true> {
-  name?: T;
-  description?: T;
-  slug?: T;
-  updatedAt?: T;
-  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2043,13 +1927,6 @@ export interface ContentBlocksSelect<T extends boolean = true> {
         members?: T;
         columns?: T;
       };
-  postsGrid?:
-    | T
-    | {
-        category?: T;
-        count?: T;
-        columns?: T;
-      };
   cta?:
     | T
     | {
@@ -2271,11 +2148,6 @@ export interface HomePage {
    * Slider auto-play interval in milliseconds
    */
   autoPlayInterval?: number | null;
-  showRecentPosts?: boolean | null;
-  /**
-   * How many recent posts to display
-   */
-  recentPostsLimit?: number | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2409,8 +2281,6 @@ export interface SiteBranding {
 export interface HomePageSelect<T extends boolean = true> {
   heroOverlayOpacity?: T;
   autoPlayInterval?: T;
-  showRecentPosts?: T;
-  recentPostsLimit?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
