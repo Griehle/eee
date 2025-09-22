@@ -19,6 +19,7 @@ import TabsBlock from './blocks/TabsBlock'
 import CarouselBlock from './blocks/CarouselBlock'
 import FeaturesBlock from './blocks/FeaturesBlock'
 import RawHtmlBlock from './blocks/RawHtmlBlock'
+import PDFFlipBookBlock from './blocks/PDFFlipBookBlock'
 
 // Stub component for unimplemented blocks
 const StubBlock = ({ block }: { block: any }) => (
@@ -183,12 +184,15 @@ export default function BlockRenderer({ block, className }: BlockRendererProps) 
       case 'features':
         return <FeaturesBlock block={block} />
       
+      // PDF FlipBook
+      case 'pdf_flipbook':
+        return <PDFFlipBookBlock block={block} />
+      
       // Unimplemented blocks - use stub
       case 'contact_form':
       case 'google_maps':
       case 'stats':
       case 'team_grid':
-      case 'posts_grid':
       case 'cta':
       case 'progress_bar':
       case 'separator':

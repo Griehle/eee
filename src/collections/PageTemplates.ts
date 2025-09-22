@@ -41,7 +41,6 @@ export const PageTemplates: CollectionConfig = {
         { label: '📞 Contact', value: 'contact' },
         { label: '🛍️ Services', value: 'services' },
         { label: '👥 Team', value: 'team' },
-        { label: '📰 Blog', value: 'blog' },
         { label: '📁 Portfolio', value: 'portfolio' },
         { label: '💰 Pricing', value: 'pricing' },
         { label: '❓ FAQ', value: 'faq' },

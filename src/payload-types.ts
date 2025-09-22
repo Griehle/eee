@@ -520,7 +520,8 @@ export interface ContentBlock {
     | 'posts_grid'
     | 'cta'
     | 'progress_bar'
-    | 'separator';
+    | 'separator'
+    | 'pdf_flipbook';
   /**
    * Define columns for this row - each column can contain multiple content blocks
    */
@@ -852,6 +853,52 @@ export interface ContentBlock {
     width?: ('25' | '50' | '75' | '100') | null;
     color?: string | null;
   };
+  /**
+   * PDF FlipBook configuration
+   */
+  pdfFlipbook?: {
+    /**
+     * Select a PDF document to display as flipbook
+     */
+    pdfDocument: number | PdfDocument;
+    /**
+     * Show document title above flipbook
+     */
+    displayTitle?: boolean | null;
+    /**
+     * Show document description below flipbook
+     */
+    displayDescription?: boolean | null;
+    /**
+     * Use advanced flipbook with search, zoom, and fullscreen features
+     */
+    useAdvanced?: boolean | null;
+    /**
+     * Optionally override the PDF document's default settings for this specific instance
+     */
+    overrideSettings?: {
+      /**
+       * Override document width (leave empty to use document settings)
+       */
+      width?: number | null;
+      /**
+       * Override document height (leave empty to use document settings)
+       */
+      height?: number | null;
+      /**
+       * Override download setting (leave unchecked to use document settings)
+       */
+      enableDownload?: boolean | null;
+      /**
+       * Override fullscreen setting (leave unchecked to use document settings)
+       */
+      enableFullscreen?: boolean | null;
+      /**
+       * Override cover page setting (leave unchecked to use document settings)
+       */
+      showCover?: boolean | null;
+    };
+  };
   styling?: {
     /**
      * Top margin (e.g., 20px, 2rem)
@@ -1089,6 +1136,79 @@ export interface Category {
    * URL-friendly version of the category name
    */
   slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pdf-documents".
+ */
+export interface PdfDocument {
+  id: number;
+  /**
+   * The title of the PDF document
+   */
+  title: string;
+  /**
+   * Brief description of the PDF document
+   */
+  description?: string | null;
+  /**
+   * Upload the PDF file
+   */
+  pdfFile: number | Media;
+  category?: ('brochure' | 'manual' | 'catalog' | 'report' | 'book' | 'magazine' | 'other') | null;
+  /**
+   * Optional thumbnail image for the document
+   */
+  thumbnail?: (number | null) | Media;
+  settings?: {
+    /**
+     * Display a custom cover page before the PDF
+     */
+    showCover?: boolean | null;
+    /**
+     * Width of the flipbook in pixels
+     */
+    width?: number | null;
+    /**
+     * Height of the flipbook in pixels
+     */
+    height?: number | null;
+    /**
+     * Allow users to download the PDF
+     */
+    enableDownload?: boolean | null;
+    /**
+     * Allow fullscreen viewing
+     */
+    enableFullscreen?: boolean | null;
+  };
+  /**
+   * Check to make this document publicly visible
+   */
+  isPublished?: boolean | null;
+  publishedAt?: string | null;
+  /**
+   * Add tags to help categorize and search documents
+   */
+  tags?: string[] | null;
+  /**
+   * Author or creator of the document
+   */
+  author?: string | null;
+  /**
+   * URL-friendly version of the title
+   */
+  slug?: string | null;
+  /**
+   * Number of times this document has been viewed
+   */
+  viewCount?: number | null;
+  /**
+   * Number of times this document has been downloaded
+   */
+  downloadCount?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1377,79 +1497,6 @@ export interface Service {
    * Display order (lower numbers appear first)
    */
   order?: number | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "pdf-documents".
- */
-export interface PdfDocument {
-  id: number;
-  /**
-   * The title of the PDF document
-   */
-  title: string;
-  /**
-   * Brief description of the PDF document
-   */
-  description?: string | null;
-  /**
-   * Upload the PDF file
-   */
-  pdfFile: number | Media;
-  category?: ('brochure' | 'manual' | 'catalog' | 'report' | 'book' | 'magazine' | 'other') | null;
-  /**
-   * Optional thumbnail image for the document
-   */
-  thumbnail?: (number | null) | Media;
-  settings?: {
-    /**
-     * Display a custom cover page before the PDF
-     */
-    showCover?: boolean | null;
-    /**
-     * Width of the flipbook in pixels
-     */
-    width?: number | null;
-    /**
-     * Height of the flipbook in pixels
-     */
-    height?: number | null;
-    /**
-     * Allow users to download the PDF
-     */
-    enableDownload?: boolean | null;
-    /**
-     * Allow fullscreen viewing
-     */
-    enableFullscreen?: boolean | null;
-  };
-  /**
-   * Check to make this document publicly visible
-   */
-  isPublished?: boolean | null;
-  publishedAt?: string | null;
-  /**
-   * Add tags to help categorize and search documents
-   */
-  tags?: string[] | null;
-  /**
-   * Author or creator of the document
-   */
-  author?: string | null;
-  /**
-   * URL-friendly version of the title
-   */
-  slug?: string | null;
-  /**
-   * Number of times this document has been viewed
-   */
-  viewCount?: number | null;
-  /**
-   * Number of times this document has been downloaded
-   */
-  downloadCount?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -2035,6 +2082,23 @@ export interface ContentBlocksSelect<T extends boolean = true> {
         style?: T;
         width?: T;
         color?: T;
+      };
+  pdfFlipbook?:
+    | T
+    | {
+        pdfDocument?: T;
+        displayTitle?: T;
+        displayDescription?: T;
+        useAdvanced?: T;
+        overrideSettings?:
+          | T
+          | {
+              width?: T;
+              height?: T;
+              enableDownload?: T;
+              enableFullscreen?: T;
+              showCover?: T;
+            };
       };
   styling?:
     | T

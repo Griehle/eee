@@ -11,8 +11,6 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { MediaCategories } from './collections/MediaCategories'
 import { Pages } from './collections/Pages'
-import { Posts } from './collections/Posts'
-import { Categories } from './collections/Categories'
 import { HomeSlider } from './collections/HomeSlider'
 import { HomeSection } from './collections/HomeSection'
 import { Testimonials } from './collections/Testimonials'
@@ -39,8 +37,6 @@ export default buildConfig({
     Media, 
     MediaCategories, 
     Pages, 
-    Posts, 
-    Categories, 
     HomeSlider, 
     HomeSection,
     Testimonials,

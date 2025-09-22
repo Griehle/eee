@@ -26,24 +26,6 @@ export const HomePage: GlobalConfig = {
         position: 'sidebar',
       },
     },
-    {
-      name: 'showRecentPosts',
-      type: 'checkbox',
-      label: 'Show Recent Posts',
-      defaultValue: true,
-      admin: {
-        position: 'sidebar',
-      },
-    },
-    {
-      name: 'recentPostsLimit',
-      type: 'number',
-      defaultValue: 3,
-      admin: {
-        position: 'sidebar',
-        description: 'How many recent posts to display',
-      },
-    },
   ],
 }
 

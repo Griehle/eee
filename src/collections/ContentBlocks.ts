@@ -57,12 +57,12 @@ export const ContentBlocks: CollectionConfig = {
         { label: '✅ Features List', value: 'features' },
         { label: '📊 Statistics', value: 'stats' },
         { label: '👥 Team Members', value: 'team_grid' },
-        { label: '📝 Posts Grid', value: 'posts_grid' },
         
         // Media & Visual
         { label: '🌟 Call to Action', value: 'cta' },
         { label: '📊 Progress Bar', value: 'progress_bar' },
         { label: '➗ Separator', value: 'separator' },
+        { label: '📚 PDF FlipBook', value: 'pdf_flipbook' },
       ],
       admin: {
         description: 'What type of content block this is',
@@ -644,36 +644,6 @@ export const ContentBlocks: CollectionConfig = {
       },
     },
     {
-      name: 'postsGrid',
-      type: 'group',
-      fields: [
-        {
-          name: 'category',
-          type: 'relationship',
-          relationTo: 'categories',
-        },
-        {
-          name: 'count',
-          type: 'number',
-          defaultValue: 6,
-        },
-        {
-          name: 'columns',
-          type: 'select',
-          options: [
-            { label: '2 Columns', value: '2' },
-            { label: '3 Columns', value: '3' },
-            { label: '4 Columns', value: '4' },
-          ],
-          defaultValue: '3',
-        },
-      ],
-      admin: {
-        description: 'Posts grid configuration',
-        condition: (data) => ['posts_grid'].includes(data.blockType),
-      },
-    },
-    {
       name: 'cta',
       type: 'group',
       fields: [
@@ -781,6 +751,94 @@ export const ContentBlocks: CollectionConfig = {
       admin: {
         description: 'Separator styling',
         condition: (data) => ['separator'].includes(data.blockType),
+      },
+    },
+    {
+      name: 'pdfFlipbook',
+      type: 'group',
+      fields: [
+        {
+          name: 'pdfDocument',
+          type: 'relationship',
+          relationTo: 'pdf-documents',
+          required: true,
+          admin: {
+            description: 'Select a PDF document to display as flipbook',
+          },
+        },
+        {
+          name: 'displayTitle',
+          type: 'checkbox',
+          defaultValue: true,
+          admin: {
+            description: 'Show document title above flipbook',
+          },
+        },
+        {
+          name: 'displayDescription',
+          type: 'checkbox',
+          defaultValue: false,
+          admin: {
+            description: 'Show document description below flipbook',
+          },
+        },
+        {
+          name: 'useAdvanced',
+          type: 'checkbox',
+          defaultValue: true,
+          admin: {
+            description: 'Use advanced flipbook with search, zoom, and fullscreen features',
+          },
+        },
+        {
+          name: 'overrideSettings',
+          type: 'group',
+          label: 'Override Document Settings',
+          fields: [
+            {
+              name: 'width',
+              type: 'number',
+              admin: {
+                description: 'Override document width (leave empty to use document settings)',
+              },
+            },
+            {
+              name: 'height',
+              type: 'number',
+              admin: {
+                description: 'Override document height (leave empty to use document settings)',
+              },
+            },
+            {
+              name: 'enableDownload',
+              type: 'checkbox',
+              admin: {
+                description: 'Override download setting (leave unchecked to use document settings)',
+              },
+            },
+            {
+              name: 'enableFullscreen',
+              type: 'checkbox',
+              admin: {
+                description: 'Override fullscreen setting (leave unchecked to use document settings)',
+              },
+            },
+            {
+              name: 'showCover',
+              type: 'checkbox',
+              admin: {
+                description: 'Override cover page setting (leave unchecked to use document settings)',
+              },
+            },
+          ],
+          admin: {
+            description: 'Optionally override the PDF document\'s default settings for this specific instance',
+          },
+        },
+      ],
+      admin: {
+        description: 'PDF FlipBook configuration',
+        condition: (data) => ['pdf_flipbook'].includes(data.blockType),
       },
     },
     // Advanced Styling Options (WPBakery-style)
