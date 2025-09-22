@@ -26,6 +26,7 @@ async function getPageBySlug(slug: string): Promise<Page | null> {
         },
       },
       limit: 1,
+      depth: 3, // Populate nested relationships (page -> content blocks -> PDF documents -> media files)
     })
 
     return pages.docs[0] || null
