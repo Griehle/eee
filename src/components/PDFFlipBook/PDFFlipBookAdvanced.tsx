@@ -1,13 +1,56 @@
 'use client';
 
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import HTMLFlipBook from 'react-pageflip';
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-import 'react-pdf/dist/esm/Page/TextLayer.css';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
 
-// Set up PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+// Ensure PDF.js worker is properly configured
+// react-pdf 10.x uses pdfjs-dist 5.3.93
+if (typeof window !== 'undefined') {
+  // Use local worker file that matches react-pdf's pdfjs version
+  pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.js';
+  console.log('📦 PDF.js worker configured for version:', pdfjs.version);
+  console.log('🔗 Worker URL:', pdfjs.GlobalWorkerOptions.workerSrc);
+  
+  // Polyfill DOMMatrix for react-pageflip if not available
+  if (!window.DOMMatrix) {
+    // Simple DOMMatrix polyfill for basic functionality
+    (window as any).DOMMatrix = class DOMMatrix {
+      a: number = 1; b: number = 0; c: number = 0;
+      d: number = 1; e: number = 0; f: number = 0;
+      
+      constructor(init?: string | number[]) {
+        if (Array.isArray(init)) {
+          [this.a, this.b, this.c, this.d, this.e, this.f] = init;
+        }
+      }
+      
+      translate(x: number, y: number) {
+        return new (window as any).DOMMatrix([this.a, this.b, this.c, this.d, this.e + x, this.f + y]);
+      }
+      
+      scale(x: number, y: number = x) {
+        return new (window as any).DOMMatrix([this.a * x, this.b * y, this.c * x, this.d * y, this.e, this.f]);
+      }
+      
+      rotate(angle: number) {
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        return new (window as any).DOMMatrix([
+          this.a * cos - this.b * sin,
+          this.a * sin + this.b * cos,
+          this.c * cos - this.d * sin,
+          this.c * sin + this.d * cos,
+          this.e,
+          this.f
+        ]);
+      }
+    };
+    console.log('🔧 DOMMatrix polyfill added for react-pageflip');
+  }
+}
 
 interface PDFFlipBookAdvancedProps {
   pdfUrl: string;
@@ -67,6 +110,8 @@ export const PDFFlipBookAdvanced: React.FC<PDFFlipBookAdvancedProps> = ({
   onPageChange,
   onDownload
 }) => {
+  console.log('🔥 PDFFlipBookAdvanced initialized with:', { pdfUrl, title, width, height });
+  
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -81,18 +126,33 @@ export const PDFFlipBookAdvanced: React.FC<PDFFlipBookAdvancedProps> = ({
   const flipBook = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [pdf, setPdf] = useState<any>(null);
+  
+  // Memoize PDF options to prevent unnecessary reloads
+  const pdfOptions = useMemo(() => ({
+    // Disable external resources to avoid CORS issues
+    disableFontFace: false,
+    disableRange: false,
+    disableStream: false,
+  }), []);
 
   const onDocumentLoadSuccess = useCallback(({ numPages }: { numPages: number }) => {
+    console.log('✅ PDF loaded successfully!', { numPages, pdfUrl });
     setNumPages(numPages);
     setIsLoading(false);
     setError(null);
-  }, []);
+  }, [pdfUrl]);
 
   const onDocumentLoadError = useCallback((error: Error) => {
-    console.error('Error loading PDF:', error);
-    setError('Failed to load PDF document');
+    console.error('❌ Error loading PDF:', error);
+    console.error('❌ PDF URL was:', pdfUrl);
+    console.error('❌ Error details:', {
+      message: error.message,
+      name: error.name,
+      stack: error.stack
+    });
+    setError(`Failed to load PDF: ${error.message}`);
     setIsLoading(false);
-  }, []);
+  }, [pdfUrl]);
 
   // Fullscreen functionality
   const toggleFullscreen = useCallback(() => {
@@ -198,6 +258,30 @@ export const PDFFlipBookAdvanced: React.FC<PDFFlipBookAdvancedProps> = ({
     }
   }, [performSearch]);
 
+  // Debug: Track PDF loading attempts
+  useEffect(() => {
+    console.log('🔄 Starting PDF load attempt for:', pdfUrl);
+    console.log('🔄 PDF.js worker configured as:', pdfjs.GlobalWorkerOptions.workerSrc);
+    console.log('🔄 PDF.js version:', pdfjs.version);
+    
+    // Test PDF.js directly
+    const testPDFLoad = async () => {
+      try {
+        console.log('🧪 Testing direct PDF.js load...');
+        const loadingTask = pdfjs.getDocument(pdfUrl);
+        loadingTask.promise.then((pdf) => {
+          console.log('✅ Direct PDF.js load successful!', pdf.numPages, 'pages');
+        }).catch((error) => {
+          console.error('❌ Direct PDF.js load failed:', error);
+        });
+      } catch (error) {
+        console.error('❌ Error creating PDF loading task:', error);
+      }
+    };
+    
+    testPDFLoad();
+  }, [pdfUrl]);
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -262,8 +346,30 @@ export const PDFFlipBookAdvanced: React.FC<PDFFlipBookAdvancedProps> = ({
   }
 
   if (isLoading) {
+    console.log('🔄 FlipBook is in LOADING state, showing spinner...');
     return (
       <div className={`pdf-flipbook-container loading ${className}`}>
+        {/* Hidden Document component MUST render even during loading to get page count */}
+        <div style={{ display: 'none' }}>
+          {console.log('📄 Rendering Document component during loading state')}
+          <Document
+            file={pdfUrl}
+            onLoadSuccess={(pdf) => {
+              console.log('🎉 Document onLoadSuccess during loading!', pdf);
+              onDocumentLoadSuccess({ numPages: pdf.numPages });
+              setPdf(pdf);
+            }}
+            onLoadError={(error) => {
+              console.log('😱 Document onLoadError during loading:', error);
+              onDocumentLoadError(error);
+            }}
+            loading=""
+            options={pdfOptions}
+          >
+            <Page pageNumber={1} />
+          </Document>
+        </div>
+        
         <div className="loading-spinner">
           <div className="spinner"></div>
           <p>Loading PDF...</p>
@@ -284,18 +390,36 @@ export const PDFFlipBookAdvanced: React.FC<PDFFlipBookAdvancedProps> = ({
     );
   }
 
+  console.log('✅ FlipBook rendering main component! isLoading:', isLoading, 'numPages:', numPages);
+  
   return (
     <div ref={containerRef} className={`pdf-flipbook-container advanced ${className} ${isFullscreen ? 'fullscreen' : ''}`}>
-      {/* Hidden Document component to get total pages and PDF object */}
+      {/* Hidden Document component to get total pages and PDF object - Always render this! */}
       <div style={{ display: 'none' }}>
+        {console.log('📄 About to render Document component with file:', pdfUrl)}
         <Document
           file={pdfUrl}
           onLoadSuccess={(pdf) => {
+            console.log('🎉 Document component onLoadSuccess called with:', pdf);
             onDocumentLoadSuccess({ numPages: pdf.numPages });
             setPdf(pdf);
           }}
-          onLoadError={onDocumentLoadError}
+          onLoadError={(error) => {
+            console.log('😱 Document component onLoadError called with:', error);
+            onDocumentLoadError(error);
+          }}
+          onLoadProgress={(progress) => {
+            console.log('📊 PDF loading progress:', Math.round((progress.loaded / progress.total) * 100) + '%');
+          }}
+          onSourceSuccess={() => {
+            console.log('📎 PDF source loaded successfully');
+          }}
+          onSourceError={(error) => {
+            console.log('😱 PDF source error:', error);
+            onDocumentLoadError(error);
+          }}
           loading=""
+          options={pdfOptions}
         >
           <Page pageNumber={1} />
         </Document>

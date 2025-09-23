@@ -3,11 +3,17 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import HTMLFlipBook from 'react-pageflip';
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-import 'react-pdf/dist/esm/Page/TextLayer.css';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
 
-// Set up PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+// Set up PDF.js worker - use Next.js static assets
+if (typeof window !== 'undefined') {
+  // Try local worker first, fallback to CDN if needed
+  pdfjs.GlobalWorkerOptions.workerSrc = `/pdf.worker.min.js`;
+  
+  // Alternative: Use CDN as backup
+  // pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+}
 
 interface PDFFlipBookProps {
   pdfUrl: string;
@@ -54,20 +60,26 @@ export const PDFFlipBook: React.FC<PDFFlipBookProps> = ({
   title,
   className = ''
 }) => {
+  console.log('PDFFlipBook initialized with URL:', pdfUrl);
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const flipBook = useRef<any>(null);
 
   const onDocumentLoadSuccess = useCallback(({ numPages }: { numPages: number }) => {
+    console.log('PDF loaded successfully with', numPages, 'pages from:', pdfUrl);
     setNumPages(numPages);
     setIsLoading(false);
-  }, []);
+    setError(null);
+  }, [pdfUrl]);
 
   const onDocumentLoadError = useCallback((error: Error) => {
     console.error('Error loading PDF:', error);
+    console.error('PDF URL was:', pdfUrl);
+    setError(`Failed to load PDF: ${error.message}`);
     setIsLoading(false);
-  }, []);
+  }, [pdfUrl]);
 
   const goToPage = useCallback((pageNumber: number) => {
     if (flipBook.current) {
@@ -125,6 +137,20 @@ export const PDFFlipBook: React.FC<PDFFlipBookProps> = ({
         <div className="loading-spinner">
           <div className="spinner"></div>
           <p>Loading PDF...</p>
+          <small style={{color: '#666', marginTop: '10px'}}>URL: {pdfUrl}</small>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={`pdf-flipbook-container ${className}`}>
+        <div className="error-message">
+          <h3>Error Loading PDF</h3>
+          <p>{error}</p>
+          <small>URL: {pdfUrl}</small>
+          <button onClick={() => window.location.reload()}>Try Again</button>
         </div>
       </div>
     );
