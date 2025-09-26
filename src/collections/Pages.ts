@@ -191,9 +191,10 @@ export const Pages: CollectionConfig = {
         // Handle template loading
         if (data.templateSelector?.useTemplate && data.templateSelector?.template) {
           try {
-            const templateId = typeof data.templateSelector.template === 'string' 
-              ? data.templateSelector.template 
-              : data.templateSelector.template.id
+            const templateId =
+              typeof data.templateSelector.template === 'string'
+                ? data.templateSelector.template
+                : data.templateSelector.template.id
 
             // Fetch the template
             const template = await req.payload.findByID({
@@ -212,7 +213,7 @@ export const Pages: CollectionConfig = {
             req.payload.logger.error(`Error loading template: ${errorMessage}`)
           }
         }
-        
+
         return data
       },
     ],

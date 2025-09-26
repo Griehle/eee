@@ -1,0 +1,564 @@
+/* ==========================================================================
+   HEADER STYLES
+   Comprehensive header styling system with multiple layouts and customization
+   ========================================================================== */
+
+/* CSS Custom Properties for easy theming */
+:root {
+  /* Header Colors */
+  --header-bg-color: #ffffff;
+  --header-text-color: #333333;
+  --header-border-color: #e5e7eb;
+  --header-shadow-color: rgba(0, 0, 0, 0.1);
+  --header-accent-color: #3b82f6;
+  
+  /* Header Spacing */
+  --header-padding-x: 1rem;
+  --header-padding-y: 1rem;
+  --header-max-width: 1200px;
+  --header-height: auto;
+  --header-logo-max-height: 50px;
+  
+  /* Navigation */
+  --nav-link-spacing: 1rem;
+  --nav-link-hover-color: #1d4ed8;
+  --nav-link-active-color: #3b82f6;
+  
+  /* Responsive breakpoints */
+  --header-mobile-breakpoint: 768px;
+  --header-tablet-breakpoint: 1024px;
+}
+
+/* Base Header Styles */
+.header {
+  background-color: var(--header-bg-color);
+  color: var(--header-text-color);
+  border-bottom: 1px solid var(--header-border-color);
+  box-shadow: 0 2px 4px var(--header-shadow-color);
+  position: relative;
+  z-index: 100;
+  transition: all 0.3s ease;
+}
+
+.header.sticky {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header.fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+/* Navigation Container */
+.nav {
+  max-width: var(--header-max-width);
+  margin: 0 auto;
+  padding: var(--header-padding-y) var(--header-padding-x);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* ==========================================================================
+   HEADER LAYOUT STYLES
+   ========================================================================== */
+
+/* Standard Layout (Logo left, Nav center, Auth right) */
+.header-style-standard .nav {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-style-standard .nav-left {
+  justify-self: start;
+}
+
+.header-style-standard .nav-center {
+  justify-self: center;
+}
+
+.header-style-standard .nav-right {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Split Layout (Logo left, everything else right) */
+.header-style-split .nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-style-split .nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Centered Layout (Logo center, nav below) */
+.header-style-centered .nav {
+  flex-direction: column;
+  text-align: center;
+  gap: 1rem;
+}
+
+.header-style-centered .nav-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-style-centered .nav-row-2 {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Stacked Layout (Logo top, nav below) */
+.header-style-stacked .nav {
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.header-style-stacked .nav-row-1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.header-style-stacked .nav-row-2 {
+  width: 100%;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   BRAND/LOGO STYLES
+   ========================================================================== */
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  font-size: 1.5rem;
+  font-weight: 700;
+  transition: opacity 0.3s ease;
+}
+
+.nav-brand:hover {
+  opacity: 0.8;
+  text-decoration: none;
+  color: inherit;
+}
+
+.brand-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.header-style-centered .brand-content {
+  align-items: center;
+}
+
+.brand-tagline {
+  font-size: 0.875rem;
+  font-weight: 400;
+  opacity: 0.8;
+  margin-top: 0.25rem;
+  line-height: 1.2;
+}
+
+.nav-brand img {
+  max-height: var(--header-logo-max-height);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+/* ==========================================================================
+   NAVIGATION MENU STYLES
+   ========================================================================== */
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: var(--nav-link-spacing);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-link {
+  color: var(--header-text-color);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  position: relative;
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  color: var(--nav-link-hover-color);
+  background-color: rgba(59, 130, 246, 0.1);
+  text-decoration: none;
+}
+
+.nav-link.active {
+  color: var(--nav-link-active-color);
+  background-color: rgba(59, 130, 246, 0.15);
+}
+
+/* Underline animation effect */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: var(--nav-link-active-color);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 80%;
+}
+
+/* ==========================================================================
+   AUTH SECTION STYLES
+   ========================================================================== */
+
+.nav-auth {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.nav-welcome {
+  font-size: 0.875rem;
+  color: var(--header-text-color);
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+.nav-link.register {
+  background-color: var(--header-accent-color);
+  color: white;
+  font-weight: 600;
+}
+
+.nav-link.register:hover {
+  background-color: var(--nav-link-hover-color);
+  color: white;
+}
+
+.nav-link.logout {
+  color: #dc2626;
+}
+
+.nav-link.logout:hover {
+  background-color: rgba(220, 38, 38, 0.1);
+  color: #b91c1c;
+}
+
+/* ==========================================================================
+   SOCIAL MEDIA STYLES
+   ========================================================================== */
+
+.nav-social {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: rgba(59, 130, 246, 0.1);
+  text-decoration: none;
+  font-size: 1.25rem;
+  transition: all 0.3s ease;
+}
+
+.social-link:hover {
+  background-color: var(--header-accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+}
+
+/* ==========================================================================
+   CONTACT INFO STYLES
+   ========================================================================== */
+
+.nav-contact {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--header-border-color);
+  font-size: 0.875rem;
+  background-color: rgba(59, 130, 246, 0.05);
+  justify-content: center;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN
+   ========================================================================== */
+
+/* Tablet Styles */
+@media (max-width: 1024px) {
+  .header-style-standard .nav {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+  }
+  
+  .header-style-standard .nav-center {
+    grid-column: 1 / -1;
+    justify-self: center;
+    order: 3;
+  }
+  
+  .nav-contact {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .contact-item {
+    font-size: 0.75rem;
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  :root {
+    --header-padding-x: 0.75rem;
+    --header-padding-y: 0.75rem;
+    --nav-link-spacing: 0.5rem;
+  }
+  
+  .nav {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .header-style-standard .nav,
+  .header-style-split .nav {
+    flex-direction: column;
+  }
+  
+  .nav-menu {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .nav-link {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.875rem;
+  }
+  
+  .nav-auth {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .nav-welcome {
+    order: -1;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .nav-contact {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem;
+  }
+  
+  .nav-social {
+    justify-content: center;
+  }
+  
+  /* Mobile menu toggle - for future hamburger menu implementation */
+  .mobile-menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+  }
+  
+  .mobile-menu-toggle:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+  }
+}
+
+/* Extra small mobile */
+@media (max-width: 480px) {
+  .brand-content {
+    align-items: center;
+    text-align: center;
+  }
+  
+  .nav-brand {
+    font-size: 1.25rem;
+  }
+  
+  .nav-menu {
+    width: 100%;
+  }
+  
+  .nav-link {
+    flex: 1;
+    text-align: center;
+    min-width: 80px;
+  }
+}
+
+/* ==========================================================================
+   HEADER VARIANTS
+   ========================================================================== */
+
+/* Transparent Header */
+.header.transparent {
+  background-color: transparent;
+  border-bottom: none;
+  box-shadow: none;
+}
+
+.header.transparent .nav-link {
+  color: white;
+}
+
+.header.transparent .nav-brand {
+  color: white;
+}
+
+/* Dark Header */
+.header.dark {
+  --header-bg-color: #1f2937;
+  --header-text-color: #f9fafb;
+  --header-border-color: #374151;
+  background-color: var(--header-bg-color);
+  color: var(--header-text-color);
+}
+
+/* Minimal Header */
+.header.minimal {
+  box-shadow: none;
+  border-bottom: 1px solid var(--header-border-color);
+}
+
+.header.minimal .nav {
+  padding: 0.75rem var(--header-padding-x);
+}
+
+/* Bordered Header */
+.header.bordered {
+  border-bottom: 3px solid var(--header-accent-color);
+}
+
+/* ==========================================================================
+   ANIMATION CLASSES
+   ========================================================================== */
+
+.header.animate-on-scroll {
+  transition: all 0.3s ease;
+}
+
+.header.animate-on-scroll.scrolled {
+  padding: 0.5rem 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.header.animate-on-scroll.scrolled .nav-brand {
+  font-size: 1.25rem;
+}
+
+/* Slide down animation */
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.header.animate-slide-down {
+  animation: slideDown 0.5s ease-out;
+}
+
+/* ==========================================================================
+   UTILITY CLASSES
+   ========================================================================== */
+
+.header-container {
+  width: 100%;
+  max-width: var(--header-max-width);
+  margin: 0 auto;
+  padding: 0 var(--header-padding-x);
+}
+
+/* Hide elements on specific screen sizes */
+.hide-mobile {
+  display: block;
+}
+
+.hide-tablet {
+  display: block;
+}
+
+.hide-desktop {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .hide-tablet {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1025px) {
+  .hide-desktop {
+    display: none !important;
+  }
+}
