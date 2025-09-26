@@ -1,0 +1,19 @@
+
+> my-website@1.0.0 dev /Users/sloffice/Herd/my-website
+> cross-env NODE_OPTIONS=--no-deprecation next dev
+
+ ⚠ Warning: Found multiple lockfiles. Selecting /Users/sloffice/package-lock.json.
+   Consider removing the lockfiles at:
+   * /Users/sloffice/Herd/my-website/pnpm-lock.yaml
+
+   ▲ Next.js 15.4.4
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.1.246:3000
+   - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 1399ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1287ms (838 modules)
+[⣷] Pulling schema from database...
+[2K[1G[✓] Pulling schema from database...
